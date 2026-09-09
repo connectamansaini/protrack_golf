@@ -1,4 +1,4 @@
-package com.protrackgolf.protrack_golf
+package com.makeanapplikeus.protrackgolf
 
 import io.flutter.embedding.android.FlutterActivity
 

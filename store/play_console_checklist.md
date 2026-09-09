@@ -4,7 +4,7 @@ Everything you type in Play Console, in the order the console asks for
 it. Values marked **paste** come from `store/listing.md`; files come from
 `store/` and `build/app/outputs/bundle/release/`.
 
-Package name (fixed once uploaded): `com.protrackgolf.protrack_golf`
+Package name (fixed once uploaded): `com.makeanapplikeus.protrackgolf`
 
 ## 1. Create the app
 
@@ -76,7 +76,7 @@ Uninstall the sideloaded release APK first — Play's copy is signed by
 Google's app-signing key, so the two won't install over each other:
 
 ```bash
-adb -s 49071FDAS0024R uninstall com.protrackgolf.protrack_golf
+adb -s 49071FDAS0024R uninstall com.makeanapplikeus.protrackgolf
 ```
 
 ## 5. Closed testing (only if Play requires it)
