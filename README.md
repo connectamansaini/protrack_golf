@@ -43,6 +43,18 @@ flutter test
 flutter run
 ```
 
+### Release builds
+
+Release signing reads `android/key.properties` (git-ignored) and the
+`android/upload-keystore.jks` it points at. Without them a release build
+falls back to the debug key with a warning, so a fresh clone still builds.
+Keep both files backed up somewhere private - the Play Store upload key
+lives there.
+
+```bash
+flutter build appbundle --release
+```
+
 Launcher icons and the splash screen are generated from
 `assets/branding/`:
 
