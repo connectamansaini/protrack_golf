@@ -16,12 +16,6 @@ Future<void> bootstrap() async {
   final sessionsBox = await Hive.openBox<Map<dynamic, dynamic>>(
     HiveBoxNames.sessions,
   );
-  final routinesBox = await Hive.openBox<Map<dynamic, dynamic>>(
-    HiveBoxNames.routines,
-  );
-  final bucketSessionsBox = await Hive.openBox<Map<dynamic, dynamic>>(
-    HiveBoxNames.bucketSessions,
-  );
   final bagClubsBox = await Hive.openBox<Map<dynamic, dynamic>>(
     HiveBoxNames.bagClubs,
   );
@@ -34,14 +28,6 @@ Future<void> bootstrap() async {
     ..registerSingleton<Box<Map<dynamic, dynamic>>>(
       sessionsBox,
       instanceName: HiveBoxNames.sessions,
-    )
-    ..registerSingleton<Box<Map<dynamic, dynamic>>>(
-      routinesBox,
-      instanceName: HiveBoxNames.routines,
-    )
-    ..registerSingleton<Box<Map<dynamic, dynamic>>>(
-      bucketSessionsBox,
-      instanceName: HiveBoxNames.bucketSessions,
     )
     ..registerSingleton<Box<Map<dynamic, dynamic>>>(
       bagClubsBox,

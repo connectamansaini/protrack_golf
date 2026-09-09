@@ -12,22 +12,6 @@
 
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
-import 'package:protrack_golf/src/bucket_sessions/bucket_sessions_data_source.dart'
-    as _i497;
-import 'package:protrack_golf/src/bucket_sessions/bucket_sessions_injectable_module.dart'
-    as _i459;
-import 'package:protrack_golf/src/bucket_sessions/bucket_sessions_repository.dart'
-    as _i302;
-import 'package:protrack_golf/src/bucket_sessions/usecases/delete_bucket_session_usecase.dart'
-    as _i618;
-import 'package:protrack_golf/src/bucket_sessions/usecases/get_bucket_session_by_id_usecase.dart'
-    as _i420;
-import 'package:protrack_golf/src/bucket_sessions/usecases/get_bucket_sessions_usecase.dart'
-    as _i184;
-import 'package:protrack_golf/src/bucket_sessions/usecases/log_shot_usecase.dart'
-    as _i617;
-import 'package:protrack_golf/src/bucket_sessions/usecases/save_bucket_session_usecase.dart'
-    as _i748;
 import 'package:protrack_golf/src/locations/bloc/locations_bloc.dart' as _i205;
 import 'package:protrack_golf/src/locations/locations_data_source.dart'
     as _i361;
@@ -60,18 +44,6 @@ import 'package:protrack_golf/src/progress/progress_injectable_module.dart'
     as _i869;
 import 'package:protrack_golf/src/progress/usecases/get_club_trends_usecase.dart'
     as _i136;
-import 'package:protrack_golf/src/routines/routines_data_source.dart' as _i634;
-import 'package:protrack_golf/src/routines/routines_injectable_module.dart'
-    as _i50;
-import 'package:protrack_golf/src/routines/routines_repository.dart' as _i903;
-import 'package:protrack_golf/src/routines/usecases/delete_routine_usecase.dart'
-    as _i1009;
-import 'package:protrack_golf/src/routines/usecases/get_routine_by_id_usecase.dart'
-    as _i716;
-import 'package:protrack_golf/src/routines/usecases/get_routines_usecase.dart'
-    as _i749;
-import 'package:protrack_golf/src/routines/usecases/save_routine_usecase.dart'
-    as _i230;
 import 'package:protrack_golf/src/sessions/bloc/range_logger_bloc.dart'
     as _i418;
 import 'package:protrack_golf/src/sessions/bloc/session_detail_bloc.dart'
@@ -107,9 +79,7 @@ extension GetItInjectableX on _i174.GetIt {
     final locationsInjectableModule = _$LocationsInjectableModule();
     final myBagInjectableModule = _$MyBagInjectableModule();
     final sessionsInjectableModule = _$SessionsInjectableModule();
-    final bucketSessionsInjectableModule = _$BucketSessionsInjectableModule();
     final progressInjectableModule = _$ProgressInjectableModule();
-    final routinesInjectableModule = _$RoutinesInjectableModule();
     gh.factory<_i205.LocationsBloc>(
       () => locationsInjectableModule.locationsBloc,
     );
@@ -129,24 +99,6 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i714.SessionRecapBloc>(
       () => sessionsInjectableModule.sessionRecapBloc,
-    );
-    gh.lazySingleton<_i497.BucketSessionsDataSource>(
-      () => bucketSessionsInjectableModule.dataSource,
-    );
-    gh.lazySingleton<_i184.GetBucketSessionsUsecase>(
-      () => bucketSessionsInjectableModule.getBucketSessionsUsecase,
-    );
-    gh.lazySingleton<_i420.GetBucketSessionByIdUsecase>(
-      () => bucketSessionsInjectableModule.getBucketSessionByIdUsecase,
-    );
-    gh.lazySingleton<_i748.SaveBucketSessionUsecase>(
-      () => bucketSessionsInjectableModule.saveBucketSessionUsecase,
-    );
-    gh.lazySingleton<_i617.LogShotUsecase>(
-      () => bucketSessionsInjectableModule.logShotUsecase,
-    );
-    gh.lazySingleton<_i618.DeleteBucketSessionUsecase>(
-      () => bucketSessionsInjectableModule.deleteBucketSessionUsecase,
     );
     gh.lazySingleton<_i361.LocationsDataSource>(
       () => locationsInjectableModule.dataSource,
@@ -181,21 +133,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i136.GetClubTrendsUsecase>(
       () => progressInjectableModule.getClubTrendsUsecase,
     );
-    gh.lazySingleton<_i634.RoutinesDataSource>(
-      () => routinesInjectableModule.dataSource,
-    );
-    gh.lazySingleton<_i749.GetRoutinesUsecase>(
-      () => routinesInjectableModule.getRoutinesUsecase,
-    );
-    gh.lazySingleton<_i716.GetRoutineByIdUsecase>(
-      () => routinesInjectableModule.getRoutineByIdUsecase,
-    );
-    gh.lazySingleton<_i230.SaveRoutineUsecase>(
-      () => routinesInjectableModule.saveRoutineUsecase,
-    );
-    gh.lazySingleton<_i1009.DeleteRoutineUsecase>(
-      () => routinesInjectableModule.deleteRoutineUsecase,
-    );
     gh.lazySingleton<_i105.SessionsDataSource>(
       () => sessionsInjectableModule.dataSource,
     );
@@ -220,14 +157,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i202.IMyBagRepository>(
       () => myBagInjectableModule.repository,
     );
-    gh.lazySingleton<_i903.IRoutinesRepository>(
-      () => routinesInjectableModule.repository,
-    );
     gh.lazySingleton<_i900.ISessionsRepository>(
       () => sessionsInjectableModule.repository,
-    );
-    gh.lazySingleton<_i302.IBucketSessionsRepository>(
-      () => bucketSessionsInjectableModule.repository,
     );
     gh.lazySingleton<_i449.ILocationsRepository>(
       () => locationsInjectableModule.repository,
@@ -242,9 +173,4 @@ class _$MyBagInjectableModule extends _i547.MyBagInjectableModule {}
 
 class _$SessionsInjectableModule extends _i196.SessionsInjectableModule {}
 
-class _$BucketSessionsInjectableModule
-    extends _i459.BucketSessionsInjectableModule {}
-
 class _$ProgressInjectableModule extends _i869.ProgressInjectableModule {}
-
-class _$RoutinesInjectableModule extends _i50.RoutinesInjectableModule {}

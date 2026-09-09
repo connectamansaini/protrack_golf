@@ -5,7 +5,5 @@ abstract final class HiveBoxNames {
 
   static const String locations = 'locations_box';
   static const String sessions = 'sessions_box';
-  static const String routines = 'routines_box';
-  static const String bucketSessions = 'bucket_sessions_box';
   static const String bagClubs = 'bag_clubs_box';
 }
