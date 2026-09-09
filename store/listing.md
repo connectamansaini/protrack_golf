@@ -55,13 +55,11 @@ Your developer contact email (required on the listing).
 
 Required by Play Console even though the app collects nothing. The policy
 lives in `docs/` as both `privacy-policy.md` and a styled `index.html`
-ready for GitHub Pages (Settings → Pages → Deploy from branch → `main`,
-folder `/docs`). Pages on a private repo needs a paid GitHub plan, so
-either make the repo public or host the page from a small public repo.
-Fill in the contact email in both files before publishing, then paste the
-URL here and in Play Console:
+published by GitHub Pages from the `main` branch, folder `/docs` (the repo
+is public). Fill in the contact email in both files, and paste this URL
+into Play Console:
 
-Privacy policy URL: `https://<your-github-user>.github.io/protrack_golf/`
+Privacy policy URL: https://connectamansaini.github.io/protrack_golf/
 
 ## Data safety form — answers
 
