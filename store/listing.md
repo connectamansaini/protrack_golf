@@ -9,9 +9,9 @@ ProTrack Golf
 
 ## Short description (80 chars max)
 
-Log every range ball in one tap. Know your club distances. Track your golf like a pro.
+Log every range ball in one tap. Know your distances. Track golf like a pro.
 
-*(79 characters)*
+*(76 characters)*
 
 ## Full description (4000 chars max)
 
