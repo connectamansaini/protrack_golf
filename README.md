@@ -1,5 +1,7 @@
 # ProTrack Golf
 
+*Track your golf like a pro.*
+
 A Flutter app for new golfers at the driving range: record every ball as
 you hit it, keep a personal yardage chart for each club, and watch your
 distances change over time. Everything is stored on the device (Hive) -

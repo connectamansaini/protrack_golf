@@ -172,6 +172,13 @@ class _WelcomeHero extends StatelessWidget {
                 ),
                 const SizedBox(height: AppSpacing.md),
                 Text(
+                  'Track your golf like a pro',
+                  style: AppTypography.textTheme.labelMedium?.copyWith(
+                    color: AppColors.sandGoldLight,
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.xxs),
+                Text(
                   'Welcome to the range',
                   style: AppTypography.textTheme.headlineMedium?.copyWith(
                     color: AppColors.white,
