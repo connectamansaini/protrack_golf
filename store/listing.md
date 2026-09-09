@@ -53,16 +53,37 @@ Your developer contact email (required on the listing).
 
 ## Privacy policy
 
-Required by Play Console even though the app collects nothing. See
-`store/privacy_policy.md` once it exists; host it on GitHub Pages and
-paste the URL.
+Required by Play Console even though the app collects nothing. The policy
+lives in `docs/` as both `privacy-policy.md` and a styled `index.html`
+ready for GitHub Pages (Settings → Pages → Deploy from branch → `main`,
+folder `/docs`). Pages on a private repo needs a paid GitHub plan, so
+either make the repo public or host the page from a small public repo.
+Fill in the contact email in both files before publishing, then paste the
+URL here and in Play Console:
+
+Privacy policy URL: `https://<your-github-user>.github.io/protrack_golf/`
 
 ## Data safety form — answers
 
+Play's form asks about data the app *collects* (transmits off the device)
+or *shares* with third parties. ProTrack Golf does neither: there is no
+network code, no SDK that phones home, and no permissions in the manifest.
+
 - Does your app collect or share any of the required user data types? **No**
-- Is all of the user data collected by your app encrypted in transit? **N/A** (no data leaves the device)
-- Do you provide a way for users to request that their data is deleted? **N/A** — users delete data in-app or by uninstalling
-- Permissions: none beyond the photo picker, which is user-initiated and reads only the file chosen
+- (The remaining questions are skipped once you answer No.)
+- Security practices section: encryption in transit **not applicable**, deletion mechanism **not applicable**; when asked, say data is stored on-device only and can be deleted in-app or by uninstalling.
+
+Notes for your own confidence when filling it in:
+
+- Photos/videos attached to sessions are chosen through the system photo
+  picker (no storage or camera permission) and copied into the app's
+  private directory. They are stored, not collected.
+- Android auto-backup (`allowBackup="true"`) copies app data to the
+  user's own Google account backup. Google treats system backup as
+  outside the app's collection, so it does not change the "No" answer.
+  The privacy policy mentions it anyway.
+- If a future version adds analytics, crash reporting or cloud sync, both
+  this form and the policy must be updated first.
 
 ## Content rating questionnaire
 
