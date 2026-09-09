@@ -16,9 +16,35 @@ class ClubTrendChart extends StatelessWidget {
   static const double _height = 220;
   static const int _maxBottomLabels = 5;
 
+  /// One axis label per point. Days that appear more than once (two
+  /// sessions on the same date) get a running number so the points stay
+  /// distinguishable: "Sep 9 #1", "Sep 9 #2".
+  static List<String> _axisLabels(List<TrendPoint> points) {
+    String dayKey(DateTime d) => '${d.year}-${d.month}-${d.day}';
+    final perDay = <String, int>{};
+    for (final point in points) {
+      final key = dayKey(point.date);
+      perDay[key] = (perDay[key] ?? 0) + 1;
+    }
+    final seen = <String, int>{};
+    final labels = <String>[];
+    for (final point in points) {
+      final key = dayKey(point.date);
+      final label = DateFormatter.shortDate(point.date);
+      if ((perDay[key] ?? 0) < 2) {
+        labels.add(label);
+        continue;
+      }
+      seen[key] = (seen[key] ?? 0) + 1;
+      labels.add('$label #${seen[key]}');
+    }
+    return labels;
+  }
+
   @override
   Widget build(BuildContext context) {
     final points = trend.dataPoints;
+    final labels = _axisLabels(points);
     final spots = [
       for (var i = 0; i < points.length; i++)
         FlSpot(i.toDouble(), points[i].averageDistance),
@@ -81,10 +107,13 @@ class ClubTrendChart extends StatelessWidget {
                           index % labelStep != 0) {
                         return const SizedBox.shrink();
                       }
-                      return Padding(
-                        padding: const EdgeInsets.only(top: AppSpacing.xs),
+                      // fitInside nudges the first/last labels back inside
+                      // the chart so they aren't clipped at the edges.
+                      return SideTitleWidget(
+                        meta: meta,
+                        fitInside: SideTitleFitInsideData.fromTitleMeta(meta),
                         child: Text(
-                          DateFormatter.shortDate(points[index].date),
+                          labels[index],
                           style: AppTypography.textTheme.bodySmall,
                         ),
                       );
@@ -98,7 +127,8 @@ class ClubTrendChart extends StatelessWidget {
                   getTooltipItems: (touchedSpots) => [
                     for (final spot in touchedSpots)
                       LineTooltipItem(
-                        '${spot.y.toStringAsFixed(0)} yds',
+                        '${labels[spot.x.round().clamp(0, labels.length - 1)]}'
+                        '\n${spot.y.toStringAsFixed(0)} yds',
                         AppTypography.textTheme.labelLarge ??
                             const TextStyle(color: AppColors.white),
                       ),
