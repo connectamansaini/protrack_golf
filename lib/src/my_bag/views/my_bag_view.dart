@@ -58,28 +58,16 @@ class _MyBagScaffold extends StatelessWidget {
     ClubDistanceRecord record,
   ) async {
     final bloc = context.read<MyBagBloc>();
-    final remove = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text('Remove ${record.club.label}?'),
-        content: const Text(
+    final remove = await ConfirmDialog.show(
+      context,
+      title: 'Remove ${record.club.label} from your bag?',
+      message:
           'Your entered distance will be forgotten. Range stats for this '
           'club are kept.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: const Text('Keep'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(true),
-            style: TextButton.styleFrom(foregroundColor: AppColors.error),
-            child: const Text('Remove'),
-          ),
-        ],
-      ),
+      confirmLabel: 'Remove',
+      icon: Icons.remove_circle_outline,
     );
-    if (remove ?? false) bloc.add(BagClubRemoved(record.club));
+    if (remove) bloc.add(BagClubRemoved(record.club));
   }
 
   /// Long-press menu: the same actions as the card's overflow icon, in a

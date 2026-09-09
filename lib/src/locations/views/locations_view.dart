@@ -82,30 +82,17 @@ class _LocationsScaffold extends StatelessWidget {
   ) async {
     final bloc = context.read<LocationsBloc>();
     final sessions = usage.sessionCount;
-    final delete = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text('Delete ${location.name}?'),
-        content: Text(
-          sessions == 0
-              ? 'This location has no sessions and will be removed.'
-              : '$sessions session${sessions == 1 ? '' : 's'} recorded here '
-                    'will be kept, but will show "Unknown location".',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: const Text('Keep'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(true),
-            style: TextButton.styleFrom(foregroundColor: AppColors.error),
-            child: const Text('Delete'),
-          ),
-        ],
-      ),
+    final delete = await ConfirmDialog.show(
+      context,
+      title: 'Delete ${location.name}?',
+      message: sessions == 0
+          ? 'This location has no sessions and will be removed.'
+          : '$sessions session${sessions == 1 ? '' : 's'} recorded here '
+                'will be kept, but will show "Unknown location".',
+      confirmLabel: 'Delete',
+      icon: Icons.location_off_outlined,
     );
-    if (delete ?? false) bloc.add(LocationDeleted(location.id));
+    if (delete) bloc.add(LocationDeleted(location.id));
   }
 
   @override

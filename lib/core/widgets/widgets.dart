@@ -1,4 +1,5 @@
 export 'app_choice_chip.dart';
+export 'confirm_dialog.dart';
 export 'distance_slider.dart';
 export 'empty_view.dart';
 export 'error_view.dart';

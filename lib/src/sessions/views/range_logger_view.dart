@@ -31,28 +31,17 @@ class _RangeLoggerScaffold extends StatelessWidget {
   const _RangeLoggerScaffold();
 
   Future<void> _confirmDiscard(BuildContext context) async {
-    final discard = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: const Text('Discard session?'),
-        content: const Text(
-          'The shots you recorded will be lost. Finish the session instead '
-          'to keep them.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: const Text('Keep going'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(true),
-            style: TextButton.styleFrom(foregroundColor: AppColors.error),
-            child: const Text('Discard'),
-          ),
-        ],
-      ),
+    final discard = await ConfirmDialog.show(
+      context,
+      title: 'Discard this session?',
+      message:
+          'The shots you recorded will be lost. Use Finish instead to keep '
+          'them.',
+      confirmLabel: 'Discard',
+      cancelLabel: 'Keep going',
+      icon: Icons.delete_sweep_outlined,
     );
-    if ((discard ?? false) && context.mounted) context.pop();
+    if (discard && context.mounted) context.pop();
   }
 
   @override
@@ -281,7 +270,41 @@ class _LoggingStepState extends State<_LoggingStep> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const SectionHeader('Clubs for this session'),
+                  Row(
+                    children: [
+                      Container(
+                        width: AppSpacing.xxl,
+                        height: AppSpacing.xxl,
+                        alignment: Alignment.center,
+                        decoration: const BoxDecoration(
+                          color: AppColors.fairwayGreenTint,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.tune,
+                          color: AppColors.fairwayGreen,
+                        ),
+                      ),
+                      const SizedBox(width: AppSpacing.sm),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Clubs for this session',
+                              style: AppTypography.textTheme.headlineSmall,
+                            ),
+                            Text(
+                              'Tap to add or remove. Shots already recorded '
+                              'are kept.',
+                              style: AppTypography.textTheme.bodySmall,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: AppSpacing.md),
                   ClubMultiPicker(
                     selected: state.sessionClubs,
                     onToggled: (club) => context.read<RangeLoggerBloc>().add(

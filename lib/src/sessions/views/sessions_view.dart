@@ -6,6 +6,7 @@ import 'package:protrack_golf/app/router/app_routes.dart';
 import 'package:protrack_golf/core/core.dart';
 import 'package:protrack_golf/src/locations/locations.dart';
 import 'package:protrack_golf/src/sessions/bloc/sessions_bloc.dart';
+import 'package:protrack_golf/src/sessions/entities/practice_session.dart';
 import 'package:protrack_golf/src/sessions/widgets/widgets.dart';
 
 /// The Range tab - the app's home: a this-month summary and the list of
@@ -100,6 +101,27 @@ class _SessionsList extends StatelessWidget {
 
   final SessionsState state;
 
+  Future<void> _confirmDelete(
+    BuildContext context,
+    PracticeSession session,
+    String locationName,
+  ) async {
+    final bloc = context.read<SessionsBloc>();
+    final shots = session.totalShots;
+    final clubs = session.clubEntries.length;
+    final delete = await ConfirmDialog.show(
+      context,
+      title: 'Delete this session?',
+      message:
+          '${DateFormatter.mediumDate(session.date)} at $locationName - '
+          '$shots ball${shots == 1 ? '' : 's'} across $clubs club'
+          '${clubs == 1 ? '' : 's'}. This cannot be undone, and your club '
+          'distances will be recalculated without it.',
+      confirmLabel: 'Delete',
+    );
+    if (delete) bloc.add(SessionDeleted(session.id));
+  }
+
   @override
   Widget build(BuildContext context) {
     final now = DateTime.now();
@@ -133,8 +155,10 @@ class _SessionsList extends StatelessWidget {
                 locationName:
                     locationsById[session.locationId] ?? 'Unknown location',
                 onTap: () => context.push(SessionsRoutes.detail(session.id)),
-                onDelete: () => context.read<SessionsBloc>().add(
-                  SessionDeleted(session.id),
+                onDelete: () => _confirmDelete(
+                  context,
+                  session,
+                  locationsById[session.locationId] ?? 'Unknown location',
                 ),
               ),
           ],
