@@ -56,9 +56,17 @@ flutter build appbundle --release
 ```
 
 Launcher icons and the splash screen are generated from
-`assets/branding/`:
+`assets/branding/`, and the artwork there (plus the Play Store feature
+graphic and 512px icon in `store/`) is drawn by `tool/make_branding.ps1`:
 
 ```bash
+powershell -ExecutionPolicy Bypass -File tool/make_branding.ps1
 dart run flutter_launcher_icons
 dart run flutter_native_splash:create
 ```
+
+### Store listing
+
+`store/` holds everything for the Play Console listing: `listing.md`
+(descriptions, category, data-safety answers), `feature_graphic.png`,
+`icon_512.png` and phone screenshots captured on a Pixel 9 Pro XL.
