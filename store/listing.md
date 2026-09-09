@@ -49,7 +49,7 @@ golf, driving range, practice, yardage, club distances, beginner golf, golf trac
 
 ## Contact email
 
-Your developer contact email (required on the listing).
+makeanapplikeus@gmail.com
 
 ## Privacy policy
 
