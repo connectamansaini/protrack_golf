@@ -41,7 +41,7 @@ Work down the list; each opens a form.
 | Field | Source |
 |---|---|
 | App name | ProTrack Golf |
-| Short description | **paste** from `listing.md` (79 chars) |
+| Short description | **paste** from `listing.md` (76 chars) |
 | Full description | **paste** from `listing.md` |
 | App icon | `store/icon_512.png` |
 | Feature graphic | `store/feature_graphic.png` |
