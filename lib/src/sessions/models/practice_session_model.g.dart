@@ -24,6 +24,7 @@ PracticeSessionModel _$PracticeSessionModelFromJson(
           ?.map((e) => e as String)
           .toList() ??
       const <String>[],
+  planName: json['planName'] as String? ?? '',
 );
 
 Map<String, dynamic> _$PracticeSessionModelToJson(
@@ -36,4 +37,5 @@ Map<String, dynamic> _$PracticeSessionModelToJson(
   'clubEntries': instance.clubEntries.map((e) => e.toJson()).toList(),
   'notes': instance.notes,
   'mediaPaths': instance.mediaPaths,
+  'planName': instance.planName,
 };

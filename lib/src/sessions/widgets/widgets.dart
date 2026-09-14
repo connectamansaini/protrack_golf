@@ -15,3 +15,4 @@ export 'recent_shots_list.dart';
 export 'recurring_themes_panel.dart';
 export 'session_detail_hero.dart';
 export 'session_tile.dart';
+export 'shot_intent_toggle.dart';

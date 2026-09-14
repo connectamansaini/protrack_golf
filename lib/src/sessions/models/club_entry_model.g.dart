@@ -14,6 +14,11 @@ ClubEntryModel _$ClubEntryModelFromJson(Map<String, dynamic> json) =>
               ?.map((e) => (e as num).toDouble())
               .toList() ??
           const <double>[],
+      practiceDistances:
+          (json['practiceDistances'] as List<dynamic>?)
+              ?.map((e) => (e as num).toDouble())
+              .toList() ??
+          const <double>[],
       notes: json['notes'] as String? ?? '',
     );
 
@@ -21,5 +26,6 @@ Map<String, dynamic> _$ClubEntryModelToJson(ClubEntryModel instance) =>
     <String, dynamic>{
       'club': instance.club,
       'distances': instance.distances,
+      'practiceDistances': instance.practiceDistances,
       'notes': instance.notes,
     };

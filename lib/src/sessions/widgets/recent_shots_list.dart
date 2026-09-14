@@ -3,7 +3,8 @@ import 'package:protrack_golf/core/core.dart';
 import 'package:protrack_golf/src/sessions/entities/range_shot.dart';
 
 /// The last few logged shots, newest first and highlighted, with an "undo
-/// last shot" action. Entities in, callback out.
+/// last shot" action. Practice balls carry a badge so it is obvious which
+/// ones will not count. Entities in, callback out.
 class RecentShotsList extends StatelessWidget {
   const RecentShotsList({required this.shots, super.key, this.onUndo});
 
@@ -22,7 +23,9 @@ class RecentShotsList extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            SectionHeader(total == 0 ? 'Recent shots' : 'Recent shots  ·  $total'),
+            SectionHeader(
+              total == 0 ? 'Recent shots' : 'Recent shots  ·  $total',
+            ),
             TextButton.icon(
               onPressed: shots.isEmpty ? null : onUndo,
               icon: const Icon(Icons.undo, size: AppSpacing.md),
@@ -93,10 +96,18 @@ class _ShotRow extends StatelessWidget {
               ),
             ),
           ),
+          if (shot.isPractice) ...[
+            ShotIntentBadge(shot.intent, compact: true),
+            const SizedBox(width: AppSpacing.xs),
+          ],
           Text(
             '${shot.distanceYds.toStringAsFixed(0)} yds',
             style: AppTypography.textTheme.titleMedium?.copyWith(
-              color: latest ? AppColors.fairwayGreen : AppColors.textPrimary,
+              color: shot.isPractice
+                  ? AppColors.textSecondary
+                  : latest
+                  ? AppColors.fairwayGreen
+                  : AppColors.textPrimary,
             ),
           ),
         ],

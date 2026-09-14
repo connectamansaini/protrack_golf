@@ -16,6 +16,7 @@ class PracticeSessionModel {
     this.clubEntries = const <ClubEntryModel>[],
     this.notes = '',
     this.mediaPaths = const <String>[],
+    this.planName = '',
   });
 
   factory PracticeSessionModel.fromJson(Map<String, dynamic> json) =>
@@ -30,6 +31,7 @@ class PracticeSessionModel {
         clubEntries: entity.clubEntries.map(ClubEntryModel.fromEntity).toList(),
         notes: entity.notes,
         mediaPaths: entity.mediaPaths,
+        planName: entity.planName,
       );
 
   final String id;
@@ -39,6 +41,7 @@ class PracticeSessionModel {
   final List<ClubEntryModel> clubEntries;
   final String notes;
   final List<String> mediaPaths;
+  final String planName;
 
   static const empty = PracticeSessionModel();
 
@@ -52,5 +55,6 @@ class PracticeSessionModel {
     clubEntries: clubEntries.map((model) => model.toEntity).toList(),
     notes: notes,
     mediaPaths: mediaPaths,
+    planName: planName,
   );
 }

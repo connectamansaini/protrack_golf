@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$PracticeSession {
 
- DateTime get date; String get id; String get locationId; int get bucketSize; List<ClubEntry> get clubEntries; String get notes; List<String> get mediaPaths;
+ DateTime get date; String get id; String get locationId; int get bucketSize; List<ClubEntry> get clubEntries; String get notes; List<String> get mediaPaths; String get planName;
 /// Create a copy of PracticeSession
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -27,20 +27,20 @@ $PracticeSessionCopyWith<PracticeSession> get copyWith => _$PracticeSessionCopyW
 @override
 bool operator ==(Object other) {
   final _this = this as PracticeSession;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is PracticeSession&&(identical(other.date, _this.date) || other.date == _this.date)&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.locationId, _this.locationId) || other.locationId == _this.locationId)&&(identical(other.bucketSize, _this.bucketSize) || other.bucketSize == _this.bucketSize)&&const DeepCollectionEquality().equals(other.clubEntries, _this.clubEntries)&&(identical(other.notes, _this.notes) || other.notes == _this.notes)&&const DeepCollectionEquality().equals(other.mediaPaths, _this.mediaPaths));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is PracticeSession&&(identical(other.date, _this.date) || other.date == _this.date)&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.locationId, _this.locationId) || other.locationId == _this.locationId)&&(identical(other.bucketSize, _this.bucketSize) || other.bucketSize == _this.bucketSize)&&const DeepCollectionEquality().equals(other.clubEntries, _this.clubEntries)&&(identical(other.notes, _this.notes) || other.notes == _this.notes)&&const DeepCollectionEquality().equals(other.mediaPaths, _this.mediaPaths)&&(identical(other.planName, _this.planName) || other.planName == _this.planName));
 }
 
 
 @override
 int get hashCode {
   final _this = this as PracticeSession;
-  return Object.hash(runtimeType,_this.date,_this.id,_this.locationId,_this.bucketSize,const DeepCollectionEquality().hash(_this.clubEntries),_this.notes,const DeepCollectionEquality().hash(_this.mediaPaths));
+  return Object.hash(runtimeType,_this.date,_this.id,_this.locationId,_this.bucketSize,const DeepCollectionEquality().hash(_this.clubEntries),_this.notes,const DeepCollectionEquality().hash(_this.mediaPaths),_this.planName);
 }
 
 @override
 String toString() {
   final _this = this as PracticeSession;
-  return 'PracticeSession(date: ${_this.date}, id: ${_this.id}, locationId: ${_this.locationId}, bucketSize: ${_this.bucketSize}, clubEntries: ${_this.clubEntries}, notes: ${_this.notes}, mediaPaths: ${_this.mediaPaths})';
+  return 'PracticeSession(date: ${_this.date}, id: ${_this.id}, locationId: ${_this.locationId}, bucketSize: ${_this.bucketSize}, clubEntries: ${_this.clubEntries}, notes: ${_this.notes}, mediaPaths: ${_this.mediaPaths}, planName: ${_this.planName})';
 }
 
 
@@ -51,7 +51,7 @@ abstract mixin class $PracticeSessionCopyWith<$Res>  {
   factory $PracticeSessionCopyWith(PracticeSession value, $Res Function(PracticeSession) _then) = _$PracticeSessionCopyWithImpl;
 @useResult
 $Res call({
- DateTime date, String id, String locationId, int bucketSize, List<ClubEntry> clubEntries, String notes, List<String> mediaPaths
+ DateTime date, String id, String locationId, int bucketSize, List<ClubEntry> clubEntries, String notes, List<String> mediaPaths, String planName
 });
 
 
@@ -68,7 +68,7 @@ class _$PracticeSessionCopyWithImpl<$Res>
 
 /// Create a copy of PracticeSession
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? date = null,Object? id = null,Object? locationId = null,Object? bucketSize = null,Object? clubEntries = null,Object? notes = null,Object? mediaPaths = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? date = null,Object? id = null,Object? locationId = null,Object? bucketSize = null,Object? clubEntries = null,Object? notes = null,Object? mediaPaths = null,Object? planName = null,}) {
   return _then(PracticeSession(
 date: null == date ? _self.date : date // ignore: cast_nullable_to_non_nullable
 as DateTime,id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
@@ -77,7 +77,8 @@ as String,bucketSize: null == bucketSize ? _self.bucketSize : bucketSize // igno
 as int,clubEntries: null == clubEntries ? _self.clubEntries : clubEntries // ignore: cast_nullable_to_non_nullable
 as List<ClubEntry>,notes: null == notes ? _self.notes : notes // ignore: cast_nullable_to_non_nullable
 as String,mediaPaths: null == mediaPaths ? _self.mediaPaths : mediaPaths // ignore: cast_nullable_to_non_nullable
-as List<String>,
+as List<String>,planName: null == planName ? _self.planName : planName // ignore: cast_nullable_to_non_nullable
+as String,
   ));
 }
 
@@ -162,10 +163,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( DateTime date,  String id,  String locationId,  int bucketSize,  List<ClubEntry> clubEntries,  String notes,  List<String> mediaPaths)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( DateTime date,  String id,  String locationId,  int bucketSize,  List<ClubEntry> clubEntries,  String notes,  List<String> mediaPaths,  String planName)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _PracticeSession() when $default != null:
-return $default(_that.date,_that.id,_that.locationId,_that.bucketSize,_that.clubEntries,_that.notes,_that.mediaPaths);case _:
+return $default(_that.date,_that.id,_that.locationId,_that.bucketSize,_that.clubEntries,_that.notes,_that.mediaPaths,_that.planName);case _:
   return orElse();
 
 }
@@ -183,10 +184,10 @@ return $default(_that.date,_that.id,_that.locationId,_that.bucketSize,_that.club
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( DateTime date,  String id,  String locationId,  int bucketSize,  List<ClubEntry> clubEntries,  String notes,  List<String> mediaPaths)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( DateTime date,  String id,  String locationId,  int bucketSize,  List<ClubEntry> clubEntries,  String notes,  List<String> mediaPaths,  String planName)  $default,) {final _that = this;
 switch (_that) {
 case _PracticeSession():
-return $default(_that.date,_that.id,_that.locationId,_that.bucketSize,_that.clubEntries,_that.notes,_that.mediaPaths);case _:
+return $default(_that.date,_that.id,_that.locationId,_that.bucketSize,_that.clubEntries,_that.notes,_that.mediaPaths,_that.planName);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -203,10 +204,10 @@ return $default(_that.date,_that.id,_that.locationId,_that.bucketSize,_that.club
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( DateTime date,  String id,  String locationId,  int bucketSize,  List<ClubEntry> clubEntries,  String notes,  List<String> mediaPaths)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( DateTime date,  String id,  String locationId,  int bucketSize,  List<ClubEntry> clubEntries,  String notes,  List<String> mediaPaths,  String planName)?  $default,) {final _that = this;
 switch (_that) {
 case _PracticeSession() when $default != null:
-return $default(_that.date,_that.id,_that.locationId,_that.bucketSize,_that.clubEntries,_that.notes,_that.mediaPaths);case _:
+return $default(_that.date,_that.id,_that.locationId,_that.bucketSize,_that.clubEntries,_that.notes,_that.mediaPaths,_that.planName);case _:
   return null;
 
 }
@@ -218,7 +219,7 @@ return $default(_that.date,_that.id,_that.locationId,_that.bucketSize,_that.club
 
 
 class _PracticeSession extends PracticeSession {
-  const _PracticeSession({required this.date, this.id = '', this.locationId = '', this.bucketSize = 0,  List<ClubEntry> clubEntries = const <ClubEntry>[], this.notes = '',  List<String> mediaPaths = const <String>[]}): _clubEntries = clubEntries,_mediaPaths = mediaPaths,super._();
+  const _PracticeSession({required this.date, this.id = '', this.locationId = '', this.bucketSize = 0,  List<ClubEntry> clubEntries = const <ClubEntry>[], this.notes = '',  List<String> mediaPaths = const <String>[], this.planName = ''}): _clubEntries = clubEntries,_mediaPaths = mediaPaths,super._();
   
 
 @override final  DateTime date;
@@ -240,6 +241,7 @@ class _PracticeSession extends PracticeSession {
   return EqualUnmodifiableListView(_mediaPaths);
 }
 
+@override@JsonKey() final  String planName;
 
 /// Create a copy of PracticeSession
 /// with the given fields replaced by the non-null parameter values.
@@ -251,18 +253,18 @@ _$PracticeSessionCopyWith<_PracticeSession> get copyWith => __$PracticeSessionCo
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _PracticeSession&&(identical(other.date, date) || other.date == date)&&(identical(other.id, id) || other.id == id)&&(identical(other.locationId, locationId) || other.locationId == locationId)&&(identical(other.bucketSize, bucketSize) || other.bucketSize == bucketSize)&&const DeepCollectionEquality().equals(other.clubEntries, _clubEntries)&&(identical(other.notes, notes) || other.notes == notes)&&const DeepCollectionEquality().equals(other.mediaPaths, _mediaPaths));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _PracticeSession&&(identical(other.date, date) || other.date == date)&&(identical(other.id, id) || other.id == id)&&(identical(other.locationId, locationId) || other.locationId == locationId)&&(identical(other.bucketSize, bucketSize) || other.bucketSize == bucketSize)&&const DeepCollectionEquality().equals(other.clubEntries, _clubEntries)&&(identical(other.notes, notes) || other.notes == notes)&&const DeepCollectionEquality().equals(other.mediaPaths, _mediaPaths)&&(identical(other.planName, planName) || other.planName == planName));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,date,id,locationId,bucketSize,const DeepCollectionEquality().hash(_clubEntries),notes,const DeepCollectionEquality().hash(_mediaPaths));
+    return Object.hash(runtimeType,date,id,locationId,bucketSize,const DeepCollectionEquality().hash(_clubEntries),notes,const DeepCollectionEquality().hash(_mediaPaths),planName);
 }
 
 @override
 String toString() {
-    return 'PracticeSession(date: $date, id: $id, locationId: $locationId, bucketSize: $bucketSize, clubEntries: $clubEntries, notes: $notes, mediaPaths: $mediaPaths)';
+    return 'PracticeSession(date: $date, id: $id, locationId: $locationId, bucketSize: $bucketSize, clubEntries: $clubEntries, notes: $notes, mediaPaths: $mediaPaths, planName: $planName)';
 }
 
 
@@ -273,7 +275,7 @@ abstract mixin class _$PracticeSessionCopyWith<$Res> implements $PracticeSession
   factory _$PracticeSessionCopyWith(_PracticeSession value, $Res Function(_PracticeSession) _then) = __$PracticeSessionCopyWithImpl;
 @override @useResult
 $Res call({
- DateTime date, String id, String locationId, int bucketSize, List<ClubEntry> clubEntries, String notes, List<String> mediaPaths
+ DateTime date, String id, String locationId, int bucketSize, List<ClubEntry> clubEntries, String notes, List<String> mediaPaths, String planName
 });
 
 
@@ -290,7 +292,7 @@ class __$PracticeSessionCopyWithImpl<$Res>
 
 /// Create a copy of PracticeSession
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? date = null,Object? id = null,Object? locationId = null,Object? bucketSize = null,Object? clubEntries = null,Object? notes = null,Object? mediaPaths = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? date = null,Object? id = null,Object? locationId = null,Object? bucketSize = null,Object? clubEntries = null,Object? notes = null,Object? mediaPaths = null,Object? planName = null,}) {
   return _then(_PracticeSession(
 date: null == date ? _self.date : date // ignore: cast_nullable_to_non_nullable
 as DateTime,id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
@@ -299,7 +301,8 @@ as String,bucketSize: null == bucketSize ? _self.bucketSize : bucketSize // igno
 as int,clubEntries: null == clubEntries ? _self._clubEntries : clubEntries // ignore: cast_nullable_to_non_nullable
 as List<ClubEntry>,notes: null == notes ? _self.notes : notes // ignore: cast_nullable_to_non_nullable
 as String,mediaPaths: null == mediaPaths ? _self._mediaPaths : mediaPaths // ignore: cast_nullable_to_non_nullable
-as List<String>,
+as List<String>,planName: null == planName ? _self.planName : planName // ignore: cast_nullable_to_non_nullable
+as String,
   ));
 }
 

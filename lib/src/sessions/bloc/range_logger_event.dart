@@ -39,6 +39,17 @@ class RangeLoggerBucketSizeChanged extends RangeLoggerEvent {
   List<Object?> get props => [bucketSize];
 }
 
+/// Picks a session template to structure the bucket, or `''` for free
+/// practice with no plan.
+class RangeLoggerTemplateSelected extends RangeLoggerEvent {
+  const RangeLoggerTemplateSelected(this.templateId);
+
+  final String templateId;
+
+  @override
+  List<Object?> get props => [templateId];
+}
+
 class RangeLoggerSetupCompleted extends RangeLoggerEvent {
   const RangeLoggerSetupCompleted();
 }
@@ -82,6 +93,16 @@ class RangeLoggerDistanceChanged extends RangeLoggerEvent {
   List<Object?> get props => [distanceYds];
 }
 
+/// Whether the next ball is a practice swing or a full-potential shot.
+class RangeLoggerIntentChanged extends RangeLoggerEvent {
+  const RangeLoggerIntentChanged(this.intent);
+
+  final ShotIntent intent;
+
+  @override
+  List<Object?> get props => [intent];
+}
+
 class RangeLoggerShotLogged extends RangeLoggerEvent {
   const RangeLoggerShotLogged(this.distanceYds);
 
@@ -93,6 +114,16 @@ class RangeLoggerShotLogged extends RangeLoggerEvent {
 
 class RangeLoggerLastShotUndone extends RangeLoggerEvent {
   const RangeLoggerLastShotUndone();
+}
+
+/// Move to the next phase of the session plan before its balls run out.
+class RangeLoggerPhaseAdvanced extends RangeLoggerEvent {
+  const RangeLoggerPhaseAdvanced();
+}
+
+/// Go back to the previous phase of the session plan.
+class RangeLoggerPhaseRewound extends RangeLoggerEvent {
+  const RangeLoggerPhaseRewound();
 }
 
 class RangeLoggerNotesChanged extends RangeLoggerEvent {

@@ -3,6 +3,8 @@ import 'package:injectable/injectable.dart';
 import 'package:protrack_golf/app/injector.dart';
 import 'package:protrack_golf/core/core.dart';
 import 'package:protrack_golf/src/locations/locations.dart';
+import 'package:protrack_golf/src/plans/usecases/build_session_plan_usecase.dart';
+import 'package:protrack_golf/src/plans/usecases/get_session_templates_usecase.dart';
 import 'package:protrack_golf/src/sessions/bloc/range_logger_bloc.dart';
 import 'package:protrack_golf/src/sessions/bloc/session_detail_bloc.dart';
 import 'package:protrack_golf/src/sessions/bloc/session_form_bloc.dart';
@@ -67,6 +69,8 @@ abstract class SessionsInjectableModule {
     getIt<AddLocationUsecase>(),
     getIt<LogSessionUsecase>(),
     getIt<GetSessionsUsecase>(),
+    getIt<GetSessionTemplatesUsecase>(),
+    getIt<BuildSessionPlanUsecase>(),
   );
 
   @injectable

@@ -2,6 +2,11 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:protrack_golf/core/core.dart';
 import 'package:protrack_golf/src/locations/locations.dart';
+import 'package:protrack_golf/src/plans/entities/plan_phase.dart';
+import 'package:protrack_golf/src/plans/entities/session_plan.dart';
+import 'package:protrack_golf/src/plans/entities/session_template.dart';
+import 'package:protrack_golf/src/plans/usecases/build_session_plan_usecase.dart';
+import 'package:protrack_golf/src/plans/usecases/get_session_templates_usecase.dart';
 import 'package:protrack_golf/src/sessions/entities/club_entry.dart';
 import 'package:protrack_golf/src/sessions/entities/practice_session.dart';
 import 'package:protrack_golf/src/sessions/entities/range_shot.dart';
@@ -13,32 +18,43 @@ import 'package:protrack_golf/src/sessions/usecases/log_session_usecase.dart';
 part 'range_logger_event.dart';
 part 'range_logger_state.dart';
 
-/// Drives the shot-by-shot range logger: a quick setup step (location and
-/// bucket size), then one tap per shot until the golfer finishes, at which
-/// point the shots are folded into `ClubEntry`s and saved as a regular
-/// `PracticeSession`.
+/// Drives the shot-by-shot range logger: a quick setup step (location,
+/// clubs, bucket size and an optional session plan), then one tap per shot
+/// until the golfer finishes, at which point the shots are folded into
+/// `ClubEntry`s and saved as a regular `PracticeSession`.
 ///
-/// Depends on the locations feature's domain layer (its usecases) as a
-/// cross-feature dependency, per the architecture spec.
+/// With a plan, the bloc tracks which phase the golfer is in, moves on
+/// automatically when a phase's balls are used up, and sets the next
+/// ball's practice/full intent to match the phase. The golfer can always
+/// override the intent or skip between phases.
+///
+/// Depends on the locations and plans features' domain layers (their
+/// usecases) as cross-feature dependencies, per the architecture spec.
 class RangeLoggerBloc extends Bloc<RangeLoggerEvent, RangeLoggerState> {
   RangeLoggerBloc(
     this._getLocations,
     this._addLocation,
     this._logSession,
     this._getSessions,
+    this._getTemplates,
+    this._buildPlan,
   ) : super(const RangeLoggerState()) {
     on<RangeLoggerStarted>(_onStarted);
     on<RangeLoggerLocationSelected>(_onLocationSelected);
     on<RangeLoggerLocationAdded>(_onLocationAdded);
     on<RangeLoggerBucketSizeChanged>(_onBucketSizeChanged);
+    on<RangeLoggerTemplateSelected>(_onTemplateSelected);
     on<RangeLoggerSetupCompleted>(_onSetupCompleted);
     on<RangeLoggerLastClubsApplied>(_onLastClubsApplied);
     on<RangeLoggerClubsCleared>(_onClubsCleared);
     on<RangeLoggerClubToggled>(_onClubToggled);
     on<RangeLoggerClubSelected>(_onClubSelected);
     on<RangeLoggerDistanceChanged>(_onDistanceChanged);
+    on<RangeLoggerIntentChanged>(_onIntentChanged);
     on<RangeLoggerShotLogged>(_onShotLogged);
     on<RangeLoggerLastShotUndone>(_onLastShotUndone);
+    on<RangeLoggerPhaseAdvanced>(_onPhaseAdvanced);
+    on<RangeLoggerPhaseRewound>(_onPhaseRewound);
     on<RangeLoggerNotesChanged>(_onNotesChanged);
     on<RangeLoggerFinished>(_onFinished);
   }
@@ -47,6 +63,8 @@ class RangeLoggerBloc extends Bloc<RangeLoggerEvent, RangeLoggerState> {
   final AddLocationUsecase _addLocation;
   final LogSessionUsecase _logSession;
   final GetSessionsUsecase _getSessions;
+  final GetSessionTemplatesUsecase _getTemplates;
+  final BuildSessionPlanUsecase _buildPlan;
 
   Future<void> _onStarted(
     RangeLoggerStarted event,
@@ -62,7 +80,12 @@ class RangeLoggerBloc extends Bloc<RangeLoggerEvent, RangeLoggerState> {
           ? const <GolfClub>{}
           : {for (final entry in sessions.first.clubEntries) entry.club},
     );
-    emit(state.copyWith(lastSessionClubs: lastClubs));
+    emit(
+      state.copyWith(
+        lastSessionClubs: lastClubs,
+        templates: _getTemplates().getOrElse(() => const []),
+      ),
+    );
     final result = await _getLocations();
     emit(
       result.fold(
@@ -113,7 +136,36 @@ class RangeLoggerBloc extends Bloc<RangeLoggerEvent, RangeLoggerState> {
     RangeLoggerBucketSizeChanged event,
     Emitter<RangeLoggerState> emit,
   ) async {
-    emit(state.copyWith(bucketSize: event.bucketSize));
+    emit(_withPlan(state.copyWith(bucketSize: event.bucketSize)));
+  }
+
+  Future<void> _onTemplateSelected(
+    RangeLoggerTemplateSelected event,
+    Emitter<RangeLoggerState> emit,
+  ) async {
+    emit(_withPlan(state.copyWith(selectedTemplateId: event.templateId)));
+  }
+
+  /// Rebuilds the plan for [next]'s template, clubs and bucket. Any change
+  /// to those three goes through here so the plan preview never goes stale.
+  /// Synchronous: handlers run concurrently, so yielding between reading
+  /// `state` and emitting would let another handler's update be lost.
+  RangeLoggerState _withPlan(RangeLoggerState next) {
+    final template = next.templates
+        .where((t) => t.id == next.selectedTemplateId)
+        .firstOrNull;
+    if (template == null) {
+      return next.copyWith(clearPlan: true, planMessage: '');
+    }
+    final result = _buildPlan(
+      template: template,
+      clubs: next.sessionClubs,
+      ballCount: next.bucketSize,
+    );
+    return result.fold(
+      (failure) => next.copyWith(clearPlan: true, planMessage: failure.message),
+      (plan) => next.copyWith(plan: plan, planMessage: ''),
+    );
   }
 
   Future<void> _onSetupCompleted(
@@ -121,13 +173,36 @@ class RangeLoggerBloc extends Bloc<RangeLoggerEvent, RangeLoggerState> {
     Emitter<RangeLoggerState> emit,
   ) async {
     if (!state.canStartLogging) return;
+    final firstPhase = state.plan?.phases.firstOrNull;
     emit(
-      state.copyWith(
-        step: RangeLoggerStep.logging,
-        selectedClub: state.sessionClubs.contains(state.selectedClub)
+      _enterPhase(
+        state.copyWith(step: RangeLoggerStep.logging),
+        index: 0,
+        fallbackClub: state.sessionClubs.contains(state.selectedClub)
             ? state.selectedClub
             : state.sessionClubs.first,
+        phase: firstPhase,
       ),
+    );
+  }
+
+  /// Moves into phase [index]: resets its ball count, and points the club
+  /// and intent at what the phase asks for (or [fallbackClub] with a full
+  /// swing when there is no plan).
+  RangeLoggerState _enterPhase(
+    RangeLoggerState base, {
+    required int index,
+    required GolfClub fallbackClub,
+    PlanPhase? phase,
+  }) {
+    final club = phase?.clubs.firstOrNull ?? fallbackClub;
+    return base.copyWith(
+      phaseIndex: index,
+      phaseShots: 0,
+      selectedClub: club,
+      pendingIntent: phase?.intent ?? ShotIntent.full,
+      pendingDistanceYds:
+          base.lastDistanceByClub[club] ?? base.pendingDistanceYds,
     );
   }
 
@@ -141,11 +216,13 @@ class RangeLoggerBloc extends Bloc<RangeLoggerEvent, RangeLoggerState> {
         if (state.lastSessionClubs.contains(club)) club,
     };
     emit(
-      state.copyWith(
-        sessionClubs: ordered,
-        selectedClub: ordered.contains(state.selectedClub)
-            ? state.selectedClub
-            : ordered.first,
+      _withPlan(
+        state.copyWith(
+          sessionClubs: ordered,
+          selectedClub: ordered.contains(state.selectedClub)
+              ? state.selectedClub
+              : ordered.first,
+        ),
       ),
     );
   }
@@ -154,7 +231,7 @@ class RangeLoggerBloc extends Bloc<RangeLoggerEvent, RangeLoggerState> {
     RangeLoggerClubsCleared event,
     Emitter<RangeLoggerState> emit,
   ) async {
-    emit(state.copyWith(sessionClubs: const {}));
+    emit(_withPlan(state.copyWith(sessionClubs: const {})));
   }
 
   Future<void> _onClubToggled(
@@ -169,11 +246,13 @@ class RangeLoggerBloc extends Bloc<RangeLoggerEvent, RangeLoggerState> {
         if (clubs.contains(club)) club,
     };
     emit(
-      state.copyWith(
-        sessionClubs: ordered,
-        selectedClub: ordered.contains(state.selectedClub) || ordered.isEmpty
-            ? state.selectedClub
-            : ordered.first,
+      _withPlan(
+        state.copyWith(
+          sessionClubs: ordered,
+          selectedClub: ordered.contains(state.selectedClub) || ordered.isEmpty
+              ? state.selectedClub
+              : ordered.first,
+        ),
       ),
     );
   }
@@ -198,22 +277,49 @@ class RangeLoggerBloc extends Bloc<RangeLoggerEvent, RangeLoggerState> {
     emit(state.copyWith(pendingDistanceYds: event.distanceYds));
   }
 
+  Future<void> _onIntentChanged(
+    RangeLoggerIntentChanged event,
+    Emitter<RangeLoggerState> emit,
+  ) async {
+    emit(state.copyWith(pendingIntent: event.intent));
+  }
+
   Future<void> _onShotLogged(
     RangeLoggerShotLogged event,
     Emitter<RangeLoggerState> emit,
   ) async {
     if (event.distanceYds <= 0) return;
+    final logged = state.copyWith(
+      shots: [
+        ...state.shots,
+        RangeShot(
+          club: state.selectedClub,
+          distanceYds: event.distanceYds,
+          intent: state.pendingIntent,
+        ),
+      ],
+      lastDistanceByClub: {
+        ...state.lastDistanceByClub,
+        state.selectedClub: event.distanceYds.round(),
+      },
+      phaseShots: state.phaseShots + 1,
+    );
+    final phase = logged.currentPhase;
+    // The phase's balls are used up: roll into the next one automatically
+    // so the golfer never has to look up from the ball.
+    final phaseDone =
+        phase != null &&
+        logged.phaseShots >= phase.ballCount &&
+        !logged.isLastPhase;
     emit(
-      state.copyWith(
-        shots: [
-          ...state.shots,
-          RangeShot(club: state.selectedClub, distanceYds: event.distanceYds),
-        ],
-        lastDistanceByClub: {
-          ...state.lastDistanceByClub,
-          state.selectedClub: event.distanceYds.round(),
-        },
-      ),
+      phaseDone
+          ? _enterPhase(
+              logged,
+              index: logged.phaseIndex + 1,
+              fallbackClub: logged.selectedClub,
+              phase: logged.plan!.phases[logged.phaseIndex + 1],
+            )
+          : logged,
     );
   }
 
@@ -223,7 +329,42 @@ class RangeLoggerBloc extends Bloc<RangeLoggerEvent, RangeLoggerState> {
   ) async {
     if (state.shots.isEmpty) return;
     emit(
-      state.copyWith(shots: state.shots.sublist(0, state.shots.length - 1)),
+      state.copyWith(
+        shots: state.shots.sublist(0, state.shots.length - 1),
+        phaseShots: state.phaseShots > 0 ? state.phaseShots - 1 : 0,
+      ),
+    );
+  }
+
+  Future<void> _onPhaseAdvanced(
+    RangeLoggerPhaseAdvanced event,
+    Emitter<RangeLoggerState> emit,
+  ) async {
+    final plan = state.plan;
+    if (plan == null || state.isLastPhase) return;
+    emit(
+      _enterPhase(
+        state,
+        index: state.phaseIndex + 1,
+        fallbackClub: state.selectedClub,
+        phase: plan.phases[state.phaseIndex + 1],
+      ),
+    );
+  }
+
+  Future<void> _onPhaseRewound(
+    RangeLoggerPhaseRewound event,
+    Emitter<RangeLoggerState> emit,
+  ) async {
+    final plan = state.plan;
+    if (plan == null || state.isFirstPhase) return;
+    emit(
+      _enterPhase(
+        state,
+        index: state.phaseIndex - 1,
+        fallbackClub: state.selectedClub,
+        phase: plan.phases[state.phaseIndex - 1],
+      ),
     );
   }
 
@@ -246,6 +387,7 @@ class RangeLoggerBloc extends Bloc<RangeLoggerEvent, RangeLoggerState> {
       bucketSize: state.bucketSize,
       clubEntries: state.clubEntries,
       notes: state.notes,
+      planName: state.plan?.templateName ?? '',
     );
     final result = await _logSession(session);
     emit(

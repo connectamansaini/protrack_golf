@@ -363,7 +363,8 @@ class _GolfBagPainter extends CustomPainter {
     final pocketHeight = body.height * 0.35;
     final pocketWidth = (body.width - taper * 2 - AppSpacing.md * 3) / 2;
     for (var i = 0; i < 2; i++) {
-      final left = body.left + taper + AppSpacing.md + i * (pocketWidth + AppSpacing.md);
+      final left =
+          body.left + taper + AppSpacing.md + i * (pocketWidth + AppSpacing.md);
       canvas.drawRRect(
         RRect.fromRectAndRadius(
           Rect.fromLTWH(left, pocketTop, pocketWidth, pocketHeight),

@@ -17,6 +17,17 @@ class SessionDetailHero extends StatelessWidget {
   final String locationName;
   final VoidCallback onViewRecap;
 
+  String get _planLine {
+    final practice = session.practiceShots;
+    final practiceNote =
+        '$practice practice ball${practice == 1 ? '' : 's'} not counted in '
+        'yardages';
+    return [
+      if (session.planName.isNotEmpty) session.planName,
+      if (practice > 0) practiceNote,
+    ].join('  ·  ');
+  }
+
   @override
   Widget build(BuildContext context) {
     final clubs = session.clubEntries.length;
@@ -61,6 +72,27 @@ class SessionDetailHero extends StatelessWidget {
                 ),
               ],
             ),
+            if (session.planName.isNotEmpty || session.practiceShots > 0) ...[
+              const SizedBox(height: AppSpacing.xxs),
+              Row(
+                children: [
+                  const Icon(
+                    Icons.checklist_rtl,
+                    size: AppSpacing.md,
+                    color: AppColors.white,
+                  ),
+                  const SizedBox(width: AppSpacing.xxs),
+                  Expanded(
+                    child: Text(
+                      _planLine,
+                      style: AppTypography.textTheme.bodyMedium?.copyWith(
+                        color: AppColors.white,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
             const SizedBox(height: AppSpacing.md),
             Row(
               children: [

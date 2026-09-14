@@ -135,7 +135,9 @@ class _AddClubSheetState extends State<AddClubSheet> {
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
-                  widget.lockClub ? Icons.edit_outlined : Icons.backpack_outlined,
+                  widget.lockClub
+                      ? Icons.edit_outlined
+                      : Icons.backpack_outlined,
                   color: AppColors.fairwayGreen,
                 ),
               ),

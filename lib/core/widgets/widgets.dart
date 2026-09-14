@@ -7,4 +7,5 @@ export 'loading_view.dart';
 export 'primary_button.dart';
 export 'secondary_button.dart';
 export 'section_header.dart';
+export 'shot_intent_badge.dart';
 export 'step_card.dart';

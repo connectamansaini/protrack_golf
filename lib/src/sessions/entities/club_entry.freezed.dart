@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ClubEntry {
 
- GolfClub get club; List<double> get distances; String get notes;
+ GolfClub get club; List<double> get distances; List<double> get practiceDistances; String get notes;
 /// Create a copy of ClubEntry
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -27,20 +27,20 @@ $ClubEntryCopyWith<ClubEntry> get copyWith => _$ClubEntryCopyWithImpl<ClubEntry>
 @override
 bool operator ==(Object other) {
   final _this = this as ClubEntry;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ClubEntry&&(identical(other.club, _this.club) || other.club == _this.club)&&const DeepCollectionEquality().equals(other.distances, _this.distances)&&(identical(other.notes, _this.notes) || other.notes == _this.notes));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ClubEntry&&(identical(other.club, _this.club) || other.club == _this.club)&&const DeepCollectionEquality().equals(other.distances, _this.distances)&&const DeepCollectionEquality().equals(other.practiceDistances, _this.practiceDistances)&&(identical(other.notes, _this.notes) || other.notes == _this.notes));
 }
 
 
 @override
 int get hashCode {
   final _this = this as ClubEntry;
-  return Object.hash(runtimeType,_this.club,const DeepCollectionEquality().hash(_this.distances),_this.notes);
+  return Object.hash(runtimeType,_this.club,const DeepCollectionEquality().hash(_this.distances),const DeepCollectionEquality().hash(_this.practiceDistances),_this.notes);
 }
 
 @override
 String toString() {
   final _this = this as ClubEntry;
-  return 'ClubEntry(club: ${_this.club}, distances: ${_this.distances}, notes: ${_this.notes})';
+  return 'ClubEntry(club: ${_this.club}, distances: ${_this.distances}, practiceDistances: ${_this.practiceDistances}, notes: ${_this.notes})';
 }
 
 
@@ -51,7 +51,7 @@ abstract mixin class $ClubEntryCopyWith<$Res>  {
   factory $ClubEntryCopyWith(ClubEntry value, $Res Function(ClubEntry) _then) = _$ClubEntryCopyWithImpl;
 @useResult
 $Res call({
- GolfClub club, List<double> distances, String notes
+ GolfClub club, List<double> distances, List<double> practiceDistances, String notes
 });
 
 
@@ -68,10 +68,11 @@ class _$ClubEntryCopyWithImpl<$Res>
 
 /// Create a copy of ClubEntry
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? club = null,Object? distances = null,Object? notes = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? club = null,Object? distances = null,Object? practiceDistances = null,Object? notes = null,}) {
   return _then(ClubEntry(
 club: null == club ? _self.club : club // ignore: cast_nullable_to_non_nullable
 as GolfClub,distances: null == distances ? _self.distances : distances // ignore: cast_nullable_to_non_nullable
+as List<double>,practiceDistances: null == practiceDistances ? _self.practiceDistances : practiceDistances // ignore: cast_nullable_to_non_nullable
 as List<double>,notes: null == notes ? _self.notes : notes // ignore: cast_nullable_to_non_nullable
 as String,
   ));
@@ -158,10 +159,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( GolfClub club,  List<double> distances,  String notes)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( GolfClub club,  List<double> distances,  List<double> practiceDistances,  String notes)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ClubEntry() when $default != null:
-return $default(_that.club,_that.distances,_that.notes);case _:
+return $default(_that.club,_that.distances,_that.practiceDistances,_that.notes);case _:
   return orElse();
 
 }
@@ -179,10 +180,10 @@ return $default(_that.club,_that.distances,_that.notes);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( GolfClub club,  List<double> distances,  String notes)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( GolfClub club,  List<double> distances,  List<double> practiceDistances,  String notes)  $default,) {final _that = this;
 switch (_that) {
 case _ClubEntry():
-return $default(_that.club,_that.distances,_that.notes);case _:
+return $default(_that.club,_that.distances,_that.practiceDistances,_that.notes);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -199,10 +200,10 @@ return $default(_that.club,_that.distances,_that.notes);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( GolfClub club,  List<double> distances,  String notes)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( GolfClub club,  List<double> distances,  List<double> practiceDistances,  String notes)?  $default,) {final _that = this;
 switch (_that) {
 case _ClubEntry() when $default != null:
-return $default(_that.club,_that.distances,_that.notes);case _:
+return $default(_that.club,_that.distances,_that.practiceDistances,_that.notes);case _:
   return null;
 
 }
@@ -214,7 +215,7 @@ return $default(_that.club,_that.distances,_that.notes);case _:
 
 
 class _ClubEntry extends ClubEntry {
-  const _ClubEntry({this.club = GolfClub.driver,  List<double> distances = const <double>[], this.notes = ''}): _distances = distances,super._();
+  const _ClubEntry({this.club = GolfClub.driver,  List<double> distances = const <double>[],  List<double> practiceDistances = const <double>[], this.notes = ''}): _distances = distances,_practiceDistances = practiceDistances,super._();
   
 
 @override@JsonKey() final  GolfClub club;
@@ -223,6 +224,13 @@ class _ClubEntry extends ClubEntry {
   if (_distances is EqualUnmodifiableListView) return _distances;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_distances);
+}
+
+ final  List<double> _practiceDistances;
+@override@JsonKey() List<double> get practiceDistances {
+  if (_practiceDistances is EqualUnmodifiableListView) return _practiceDistances;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_practiceDistances);
 }
 
 @override@JsonKey() final  String notes;
@@ -237,18 +245,18 @@ _$ClubEntryCopyWith<_ClubEntry> get copyWith => __$ClubEntryCopyWithImpl<_ClubEn
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ClubEntry&&(identical(other.club, club) || other.club == club)&&const DeepCollectionEquality().equals(other.distances, _distances)&&(identical(other.notes, notes) || other.notes == notes));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ClubEntry&&(identical(other.club, club) || other.club == club)&&const DeepCollectionEquality().equals(other.distances, _distances)&&const DeepCollectionEquality().equals(other.practiceDistances, _practiceDistances)&&(identical(other.notes, notes) || other.notes == notes));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,club,const DeepCollectionEquality().hash(_distances),notes);
+    return Object.hash(runtimeType,club,const DeepCollectionEquality().hash(_distances),const DeepCollectionEquality().hash(_practiceDistances),notes);
 }
 
 @override
 String toString() {
-    return 'ClubEntry(club: $club, distances: $distances, notes: $notes)';
+    return 'ClubEntry(club: $club, distances: $distances, practiceDistances: $practiceDistances, notes: $notes)';
 }
 
 
@@ -259,7 +267,7 @@ abstract mixin class _$ClubEntryCopyWith<$Res> implements $ClubEntryCopyWith<$Re
   factory _$ClubEntryCopyWith(_ClubEntry value, $Res Function(_ClubEntry) _then) = __$ClubEntryCopyWithImpl;
 @override @useResult
 $Res call({
- GolfClub club, List<double> distances, String notes
+ GolfClub club, List<double> distances, List<double> practiceDistances, String notes
 });
 
 
@@ -276,10 +284,11 @@ class __$ClubEntryCopyWithImpl<$Res>
 
 /// Create a copy of ClubEntry
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? club = null,Object? distances = null,Object? notes = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? club = null,Object? distances = null,Object? practiceDistances = null,Object? notes = null,}) {
   return _then(_ClubEntry(
 club: null == club ? _self.club : club // ignore: cast_nullable_to_non_nullable
 as GolfClub,distances: null == distances ? _self._distances : distances // ignore: cast_nullable_to_non_nullable
+as List<double>,practiceDistances: null == practiceDistances ? _self._practiceDistances : practiceDistances // ignore: cast_nullable_to_non_nullable
 as List<double>,notes: null == notes ? _self.notes : notes // ignore: cast_nullable_to_non_nullable
 as String,
   ));

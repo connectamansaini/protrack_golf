@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$RangeShot {
 
- GolfClub get club; double get distanceYds;
+ GolfClub get club; double get distanceYds; ShotIntent get intent;
 /// Create a copy of RangeShot
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -27,20 +27,20 @@ $RangeShotCopyWith<RangeShot> get copyWith => _$RangeShotCopyWithImpl<RangeShot>
 @override
 bool operator ==(Object other) {
   final _this = this as RangeShot;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is RangeShot&&(identical(other.club, _this.club) || other.club == _this.club)&&(identical(other.distanceYds, _this.distanceYds) || other.distanceYds == _this.distanceYds));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is RangeShot&&(identical(other.club, _this.club) || other.club == _this.club)&&(identical(other.distanceYds, _this.distanceYds) || other.distanceYds == _this.distanceYds)&&(identical(other.intent, _this.intent) || other.intent == _this.intent));
 }
 
 
 @override
 int get hashCode {
   final _this = this as RangeShot;
-  return Object.hash(runtimeType,_this.club,_this.distanceYds);
+  return Object.hash(runtimeType,_this.club,_this.distanceYds,_this.intent);
 }
 
 @override
 String toString() {
   final _this = this as RangeShot;
-  return 'RangeShot(club: ${_this.club}, distanceYds: ${_this.distanceYds})';
+  return 'RangeShot(club: ${_this.club}, distanceYds: ${_this.distanceYds}, intent: ${_this.intent})';
 }
 
 
@@ -51,7 +51,7 @@ abstract mixin class $RangeShotCopyWith<$Res>  {
   factory $RangeShotCopyWith(RangeShot value, $Res Function(RangeShot) _then) = _$RangeShotCopyWithImpl;
 @useResult
 $Res call({
- GolfClub club, double distanceYds
+ GolfClub club, double distanceYds, ShotIntent intent
 });
 
 
@@ -68,11 +68,12 @@ class _$RangeShotCopyWithImpl<$Res>
 
 /// Create a copy of RangeShot
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? club = null,Object? distanceYds = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? club = null,Object? distanceYds = null,Object? intent = null,}) {
   return _then(RangeShot(
 club: null == club ? _self.club : club // ignore: cast_nullable_to_non_nullable
 as GolfClub,distanceYds: null == distanceYds ? _self.distanceYds : distanceYds // ignore: cast_nullable_to_non_nullable
-as double,
+as double,intent: null == intent ? _self.intent : intent // ignore: cast_nullable_to_non_nullable
+as ShotIntent,
   ));
 }
 
@@ -157,10 +158,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( GolfClub club,  double distanceYds)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( GolfClub club,  double distanceYds,  ShotIntent intent)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _RangeShot() when $default != null:
-return $default(_that.club,_that.distanceYds);case _:
+return $default(_that.club,_that.distanceYds,_that.intent);case _:
   return orElse();
 
 }
@@ -178,10 +179,10 @@ return $default(_that.club,_that.distanceYds);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( GolfClub club,  double distanceYds)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( GolfClub club,  double distanceYds,  ShotIntent intent)  $default,) {final _that = this;
 switch (_that) {
 case _RangeShot():
-return $default(_that.club,_that.distanceYds);case _:
+return $default(_that.club,_that.distanceYds,_that.intent);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -198,10 +199,10 @@ return $default(_that.club,_that.distanceYds);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( GolfClub club,  double distanceYds)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( GolfClub club,  double distanceYds,  ShotIntent intent)?  $default,) {final _that = this;
 switch (_that) {
 case _RangeShot() when $default != null:
-return $default(_that.club,_that.distanceYds);case _:
+return $default(_that.club,_that.distanceYds,_that.intent);case _:
   return null;
 
 }
@@ -213,11 +214,12 @@ return $default(_that.club,_that.distanceYds);case _:
 
 
 class _RangeShot extends RangeShot {
-  const _RangeShot({this.club = GolfClub.driver, this.distanceYds = 0}): super._();
+  const _RangeShot({this.club = GolfClub.driver, this.distanceYds = 0, this.intent = ShotIntent.full}): super._();
   
 
 @override@JsonKey() final  GolfClub club;
 @override@JsonKey() final  double distanceYds;
+@override@JsonKey() final  ShotIntent intent;
 
 /// Create a copy of RangeShot
 /// with the given fields replaced by the non-null parameter values.
@@ -229,18 +231,18 @@ _$RangeShotCopyWith<_RangeShot> get copyWith => __$RangeShotCopyWithImpl<_RangeS
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _RangeShot&&(identical(other.club, club) || other.club == club)&&(identical(other.distanceYds, distanceYds) || other.distanceYds == distanceYds));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _RangeShot&&(identical(other.club, club) || other.club == club)&&(identical(other.distanceYds, distanceYds) || other.distanceYds == distanceYds)&&(identical(other.intent, intent) || other.intent == intent));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,club,distanceYds);
+    return Object.hash(runtimeType,club,distanceYds,intent);
 }
 
 @override
 String toString() {
-    return 'RangeShot(club: $club, distanceYds: $distanceYds)';
+    return 'RangeShot(club: $club, distanceYds: $distanceYds, intent: $intent)';
 }
 
 
@@ -251,7 +253,7 @@ abstract mixin class _$RangeShotCopyWith<$Res> implements $RangeShotCopyWith<$Re
   factory _$RangeShotCopyWith(_RangeShot value, $Res Function(_RangeShot) _then) = __$RangeShotCopyWithImpl;
 @override @useResult
 $Res call({
- GolfClub club, double distanceYds
+ GolfClub club, double distanceYds, ShotIntent intent
 });
 
 
@@ -268,11 +270,12 @@ class __$RangeShotCopyWithImpl<$Res>
 
 /// Create a copy of RangeShot
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? club = null,Object? distanceYds = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? club = null,Object? distanceYds = null,Object? intent = null,}) {
   return _then(_RangeShot(
 club: null == club ? _self.club : club // ignore: cast_nullable_to_non_nullable
 as GolfClub,distanceYds: null == distanceYds ? _self.distanceYds : distanceYds // ignore: cast_nullable_to_non_nullable
-as double,
+as double,intent: null == intent ? _self.intent : intent // ignore: cast_nullable_to_non_nullable
+as ShotIntent,
   ));
 }
 

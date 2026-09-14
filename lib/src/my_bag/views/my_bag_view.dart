@@ -141,10 +141,12 @@ class _MyBagScaffold extends StatelessWidget {
       onHybridTapped: () => _openClubSheet(
         context,
         initialClub: GolfClub.hybrid,
-        initialDistanceYds: state.records
-            .where((r) => r.club == GolfClub.hybrid)
-            .map((r) => r.manualDistanceYds)
-            .firstOrNull ?? 0,
+        initialDistanceYds:
+            state.records
+                .where((r) => r.club == GolfClub.hybrid)
+                .map((r) => r.manualDistanceYds)
+                .firstOrNull ??
+            0,
         lockClub: state.hasHybrid,
       ),
     ),

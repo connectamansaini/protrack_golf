@@ -24,6 +24,38 @@ void main() {
       expect(state.canFinish, isTrue);
     });
 
+    test('keeps practice distances out of the yardage list', () {
+      const state = RangeLoggerState(
+        shots: [
+          RangeShot(
+            club: GolfClub.iron7,
+            distanceYds: 90,
+            intent: ShotIntent.practice,
+          ),
+          RangeShot(club: GolfClub.iron7, distanceYds: 140),
+          RangeShot(
+            club: GolfClub.pitchingWedge,
+            distanceYds: 60,
+            intent: ShotIntent.practice,
+          ),
+        ],
+      );
+
+      final entries = state.clubEntries;
+
+      expect(entries.map((e) => e.club), [
+        GolfClub.iron7,
+        GolfClub.pitchingWedge,
+      ]);
+      expect(entries.first.distances, [140]);
+      expect(entries.first.practiceDistances, [90]);
+      expect(entries.last.distances, isEmpty);
+      expect(entries.last.practiceDistances, [60]);
+      expect(state.practiceShotCount, 2);
+      expect(state.selectedClubAverageYds, 140);
+      expect(state.shotCountsByClub[GolfClub.iron7], 2);
+    });
+
     test('never reports negative balls remaining', () {
       const state = RangeLoggerState(
         bucketSize: 1,

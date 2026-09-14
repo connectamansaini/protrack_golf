@@ -6,11 +6,14 @@ part 'club_entry_model.g.dart';
 
 /// Infrastructure DTO for [ClubEntry]. The club is stored as its enum
 /// `name` string; parsing back into [GolfClub] happens in [toEntity].
+/// `practiceDistances` defaults to empty so sessions saved before practice
+/// balls existed still load.
 @JsonSerializable()
 class ClubEntryModel {
   const ClubEntryModel({
     this.club = 'driver',
     this.distances = const <double>[],
+    this.practiceDistances = const <double>[],
     this.notes = '',
   });
 
@@ -20,11 +23,13 @@ class ClubEntryModel {
   factory ClubEntryModel.fromEntity(ClubEntry entity) => ClubEntryModel(
     club: entity.club.name,
     distances: entity.distances,
+    practiceDistances: entity.practiceDistances,
     notes: entity.notes,
   );
 
   final String club;
   final List<double> distances;
+  final List<double> practiceDistances;
   final String notes;
 
   static const empty = ClubEntryModel();
@@ -34,6 +39,7 @@ class ClubEntryModel {
   ClubEntry get toEntity => ClubEntry(
     club: GolfClub.fromName(club),
     distances: distances,
+    practiceDistances: practiceDistances,
     notes: notes,
   );
 }

@@ -144,17 +144,17 @@ class GetSessionRecapUsecase {
     final currentWords = _wordsIn(current);
     final themes =
         [
-            for (final entry in sessionsPerWord.entries)
-              if (entry.value >= themeMinSessions)
-                NoteTheme(
-                  keyword: entry.key,
-                  sessionCount: entry.value,
-                  inThisSession: currentWords.contains(entry.key),
-                ),
-          ]..sort((a, b) {
-            final byCount = b.sessionCount.compareTo(a.sessionCount);
-            return byCount != 0 ? byCount : a.keyword.compareTo(b.keyword);
-          });
+          for (final entry in sessionsPerWord.entries)
+            if (entry.value >= themeMinSessions)
+              NoteTheme(
+                keyword: entry.key,
+                sessionCount: entry.value,
+                inThisSession: currentWords.contains(entry.key),
+              ),
+        ]..sort((a, b) {
+          final byCount = b.sessionCount.compareTo(a.sessionCount);
+          return byCount != 0 ? byCount : a.keyword.compareTo(b.keyword);
+        });
     return themes.take(maxThemes).toList();
   }
 

@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:protrack_golf/core/core.dart';
 import 'package:protrack_golf/src/locations/locations.dart';
+import 'package:protrack_golf/src/plans/plans.dart';
 import 'package:protrack_golf/src/sessions/sessions.dart';
 
 import '../../helpers/fake_locations_repository.dart';
@@ -32,6 +33,8 @@ void main() {
     AddLocationUsecase(locations),
     LogSessionUsecase(sessions),
     GetSessionsUsecase(sessions),
+    const GetSessionTemplatesUsecase(),
+    const BuildSessionPlanUsecase(),
   );
 
   setUp(() {
@@ -185,7 +188,8 @@ void main() {
     });
 
     test('ignores non-positive distances', () async {
-      final bloc = await started()..add(const RangeLoggerShotLogged(0));
+      final bloc = await started()
+        ..add(const RangeLoggerShotLogged(0));
       await settle();
 
       expect(bloc.state.shots, isEmpty);
@@ -220,11 +224,140 @@ void main() {
     });
 
     test('cannot finish with no shots', () async {
-      final bloc = await started()..add(const RangeLoggerFinished());
+      final bloc = await started()
+        ..add(const RangeLoggerFinished());
       await settle();
 
       expect(bloc.state.submitStatus, isA<AppStatusInitial<SessionsFailure>>());
       expect(bloc.state.savedSession, isNull);
+      await bloc.close();
+    });
+
+    test('practice balls are saved apart from full-potential ones', () async {
+      final bloc = await started();
+      bloc
+        ..add(const RangeLoggerIntentChanged(ShotIntent.practice))
+        ..add(const RangeLoggerShotLogged(90))
+        ..add(const RangeLoggerIntentChanged(ShotIntent.full))
+        ..add(const RangeLoggerShotLogged(140))
+        ..add(const RangeLoggerShotLogged(150))
+        ..add(const RangeLoggerFinished());
+      await settle();
+
+      expect(bloc.state.practiceShotCount, 1);
+      expect(bloc.state.fullShotCount, 2);
+      // Only full shots feed the running average.
+      expect(bloc.state.selectedClubAverageYds, 145);
+      final entry = bloc.state.savedSession!.clubEntries.single;
+      expect(entry.distances, [140, 150]);
+      expect(entry.practiceDistances, [90]);
+      expect(bloc.state.savedSession!.planName, isEmpty);
+      await bloc.close();
+    });
+  });
+
+  group('RangeLoggerBloc session plans', () {
+    test('loads the template catalogue and starts on free practice', () async {
+      final bloc = build()..add(const RangeLoggerStarted());
+      await settle();
+
+      expect(bloc.state.templates, SessionTemplates.all);
+      expect(bloc.state.selectedTemplateId, isEmpty);
+      expect(bloc.state.hasPlan, isFalse);
+      await bloc.close();
+    });
+
+    test('builds a plan for the chosen template and keeps it in sync with '
+        'clubs and bucket', () async {
+      final bloc = build()
+        ..add(const RangeLoggerStarted())
+        ..add(const RangeLoggerBucketSizeChanged(100))
+        ..add(const RangeLoggerTemplateSelected(SessionTemplates.focusedId));
+      await settle();
+
+      expect(bloc.state.plan?.templateName, 'Focused Practice');
+      expect(bloc.state.plan?.totalBalls, 100);
+      expect(bloc.state.plan?.phases.length, 5);
+
+      bloc.add(const RangeLoggerBucketSizeChanged(25));
+      await settle();
+
+      // Too few balls for this template: the plan drops with a reason.
+      expect(bloc.state.hasPlan, isFalse);
+      expect(bloc.state.planMessage, contains('40'));
+      expect(bloc.state.selectedTemplateId, SessionTemplates.focusedId);
+
+      bloc.add(const RangeLoggerBucketSizeChanged(50));
+      await settle();
+
+      expect(bloc.state.plan?.totalBalls, 50);
+      expect(bloc.state.planMessage, isEmpty);
+      await bloc.close();
+    });
+
+    test('walks the phases: intent and club follow the plan, and a phase '
+        'rolls over when its balls are used up', () async {
+      final bloc = build()
+        ..add(const RangeLoggerStarted())
+        ..add(const RangeLoggerClubToggled(GolfClub.pitchingWedge))
+        ..add(const RangeLoggerBucketSizeChanged(30))
+        ..add(const RangeLoggerTemplateSelected(SessionTemplates.quickId))
+        ..add(const RangeLoggerSetupCompleted());
+      await settle();
+
+      final plan = bloc.state.plan!;
+      expect(plan.phases.map((p) => p.ballCount), [6, 12, 12]);
+      expect(bloc.state.phaseIndex, 0);
+      expect(bloc.state.pendingIntent, ShotIntent.practice);
+      // Warm-up uses the shortest club brought.
+      expect(bloc.state.selectedClub, GolfClub.pitchingWedge);
+
+      for (var i = 0; i < 6; i++) {
+        bloc.add(const RangeLoggerShotLogged(80));
+      }
+      await settle();
+
+      expect(bloc.state.phaseIndex, 1);
+      expect(bloc.state.phaseShots, 0);
+      expect(bloc.state.selectedClub, GolfClub.iron7);
+      expect(bloc.state.pendingIntent, ShotIntent.practice);
+      expect(bloc.state.practiceShotCount, 6);
+
+      bloc.add(const RangeLoggerPhaseAdvanced());
+      await settle();
+
+      expect(bloc.state.phaseIndex, 2);
+      expect(bloc.state.isLastPhase, isTrue);
+      expect(bloc.state.pendingIntent, ShotIntent.full);
+
+      bloc.add(const RangeLoggerPhaseRewound());
+      await settle();
+
+      expect(bloc.state.phaseIndex, 1);
+      expect(bloc.state.pendingIntent, ShotIntent.practice);
+      await bloc.close();
+    });
+
+    test('the last phase never rolls over, and finishing records the plan '
+        'name', () async {
+      final bloc = build()
+        ..add(const RangeLoggerStarted())
+        ..add(const RangeLoggerBucketSizeChanged(20))
+        ..add(const RangeLoggerTemplateSelected(SessionTemplates.dialInId))
+        ..add(const RangeLoggerSetupCompleted())
+        ..add(const RangeLoggerPhaseAdvanced());
+      await settle();
+
+      expect(bloc.state.isLastPhase, isTrue);
+      for (var i = 0; i < 20; i++) {
+        bloc.add(const RangeLoggerShotLogged(140));
+      }
+      bloc.add(const RangeLoggerFinished());
+      await settle();
+
+      expect(bloc.state.phaseIndex, 1);
+      expect(bloc.state.savedSession?.planName, 'Dial In Distances');
+      expect(bloc.state.savedSession?.fullShots, 20);
       await bloc.close();
     });
   });

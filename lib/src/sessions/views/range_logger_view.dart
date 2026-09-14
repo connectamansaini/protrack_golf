@@ -7,6 +7,7 @@ import 'package:protrack_golf/app/injector.dart';
 import 'package:protrack_golf/app/router/app_routes.dart';
 import 'package:protrack_golf/core/core.dart';
 import 'package:protrack_golf/src/locations/locations.dart';
+import 'package:protrack_golf/src/plans/plans.dart';
 import 'package:protrack_golf/src/sessions/bloc/range_logger_bloc.dart';
 import 'package:protrack_golf/src/sessions/helpers/range_logger_step.dart';
 import 'package:protrack_golf/src/sessions/widgets/widgets.dart';
@@ -112,10 +113,25 @@ class _RangeLoggerScaffold extends StatelessWidget {
                               state.pendingDistanceYds.toDouble(),
                             ),
                           ),
-                    icon: const Icon(Icons.add),
+                    // Gold for practice balls so a glance at the button says
+                    // whether the next tap counts toward yardages.
+                    backgroundColor: state.pendingIntent == ShotIntent.practice
+                        ? AppColors.sandGold
+                        : null,
+                    foregroundColor: state.pendingIntent == ShotIntent.practice
+                        ? AppColors.white
+                        : null,
+                    icon: Icon(
+                      state.pendingIntent == ShotIntent.practice
+                          ? Icons.fitness_center
+                          : Icons.add,
+                    ),
                     label: Text(
-                      'Add ${state.selectedClub.label} shot  ·  '
-                      '${state.pendingDistanceYds} yds',
+                      state.pendingIntent == ShotIntent.practice
+                          ? 'Practice ${state.selectedClub.label}  ·  '
+                                '${state.pendingDistanceYds} yds'
+                          : 'Add ${state.selectedClub.label} shot  ·  '
+                                '${state.pendingDistanceYds} yds',
                     ),
                   )
                 : null,
@@ -147,6 +163,19 @@ class _SetupStep extends StatelessWidget {
     return count == 0 ? 'None yet' : '$count club${count == 1 ? '' : 's'}';
   }
 
+  String get _planSummary =>
+      state.plan?.templateName ??
+      (state.selectedTemplateId.isEmpty ? 'Free practice' : 'Not available');
+
+  String _templateMeta(SessionTemplate template) {
+    if (!template.supportsBucket(state.bucketSize)) {
+      return 'Needs at least ${template.minBalls} balls';
+    }
+    return '≈${template.durationMinutes} min  ·  '
+        '${template.phaseKinds.length} phases  ·  '
+        'best with ${template.idealBalls} balls';
+  }
+
   @override
   Widget build(BuildContext context) {
     final bloc = context.read<RangeLoggerBloc>();
@@ -161,7 +190,7 @@ class _SetupStep extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            'Three quick choices, then it is one tap per ball.',
+            'Four quick choices, then it is one tap per ball.',
             style: AppTypography.textTheme.bodyMedium?.copyWith(
               color: AppColors.textSecondary,
             ),
@@ -230,6 +259,60 @@ class _SetupStep extends StatelessWidget {
             child: BucketSizePicker(
               bucketSize: state.bucketSize,
               onChanged: (size) => bloc.add(RangeLoggerBucketSizeChanged(size)),
+            ),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          StepCard(
+            number: 4,
+            title: 'Session plan',
+            summary: _planSummary,
+            done: state.hasPlan || state.selectedTemplateId.isEmpty,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  'A plan splits your bucket into phases and tells you '
+                  'which balls are practice and which count.',
+                  style: AppTypography.textTheme.bodySmall?.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.xs),
+                TemplateCard(
+                  title: 'Free practice',
+                  subtitle: 'No plan. Hit what you like, tag balls yourself.',
+                  meta: 'Every ball is full potential unless you switch',
+                  icon: Icons.sports_golf,
+                  selected: state.selectedTemplateId.isEmpty,
+                  onTap: () => bloc.add(const RangeLoggerTemplateSelected('')),
+                ),
+                for (final template in state.templates) ...[
+                  const SizedBox(height: AppSpacing.xs),
+                  TemplateCard(
+                    title: template.name,
+                    subtitle: template.tagline,
+                    meta: _templateMeta(template),
+                    enabled: template.supportsBucket(state.bucketSize),
+                    selected: state.selectedTemplateId == template.id,
+                    onTap: () =>
+                        bloc.add(RangeLoggerTemplateSelected(template.id)),
+                  ),
+                ],
+                if (state.planMessage.isNotEmpty) ...[
+                  const SizedBox(height: AppSpacing.xs),
+                  Text(
+                    state.planMessage,
+                    style: AppTypography.textTheme.bodySmall?.copyWith(
+                      color: AppColors.error,
+                    ),
+                  ),
+                ],
+                if (state.plan case final plan?) ...[
+                  const SizedBox(height: AppSpacing.md),
+                  const SectionHeader('Your bucket, phase by phase'),
+                  PlanTimeline(plan: plan),
+                ],
+              ],
             ),
           ),
         ],
@@ -352,6 +435,37 @@ class _LoggingStepState extends State<_LoggingStep> {
             currentClubShots: state.selectedClubShots,
             currentClubAverageYds: state.selectedClubAverageYds,
           ),
+          if (state.currentPhase case final phase?) ...[
+            const SizedBox(height: AppSpacing.md),
+            PlanPhaseBanner(
+              phase: phase,
+              phaseNumber: state.phaseIndex + 1,
+              phaseCount: state.plan!.phaseCount,
+              shotsInPhase: state.phaseShots,
+              selectedClub: state.selectedClub,
+              onClubSelected: (club) => context.read<RangeLoggerBloc>().add(
+                RangeLoggerClubSelected(club),
+              ),
+              onPrevious: state.isFirstPhase
+                  ? null
+                  : () => context.read<RangeLoggerBloc>().add(
+                      const RangeLoggerPhaseRewound(),
+                    ),
+              onNext: state.isLastPhase
+                  ? null
+                  : () => context.read<RangeLoggerBloc>().add(
+                      const RangeLoggerPhaseAdvanced(),
+                    ),
+            ),
+          ],
+          const SizedBox(height: AppSpacing.lg),
+          const SectionHeader('This ball is'),
+          ShotIntentToggle(
+            intent: state.pendingIntent,
+            onChanged: (intent) => context.read<RangeLoggerBloc>().add(
+              RangeLoggerIntentChanged(intent),
+            ),
+          ),
           const SizedBox(height: AppSpacing.lg),
           Row(
             children: [
@@ -415,7 +529,9 @@ class _SetupBottomBar extends StatelessWidget {
     if (state.selectedLocationId.isEmpty) return 'Pick a location to start.';
     if (state.sessionClubs.isEmpty) return 'Pick at least one club.';
     final clubs = state.sessionClubs.length;
-    return '${state.bucketSize} balls  ·  $clubs club${clubs == 1 ? '' : 's'}';
+    final plan = state.plan?.templateName ?? 'free practice';
+    return '${state.bucketSize} balls  ·  $clubs club${clubs == 1 ? '' : 's'}'
+        '  ·  $plan';
   }
 
   @override

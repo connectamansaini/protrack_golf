@@ -40,6 +40,11 @@ import 'package:protrack_golf/src/my_bag/usecases/remove_bag_club_usecase.dart'
     as _i766;
 import 'package:protrack_golf/src/my_bag/usecases/save_bag_club_usecase.dart'
     as _i975;
+import 'package:protrack_golf/src/plans/plans_injectable_module.dart' as _i356;
+import 'package:protrack_golf/src/plans/usecases/build_session_plan_usecase.dart'
+    as _i969;
+import 'package:protrack_golf/src/plans/usecases/get_session_templates_usecase.dart'
+    as _i957;
 import 'package:protrack_golf/src/progress/progress_injectable_module.dart'
     as _i869;
 import 'package:protrack_golf/src/progress/usecases/get_club_trends_usecase.dart'
@@ -79,6 +84,7 @@ extension GetItInjectableX on _i174.GetIt {
     final locationsInjectableModule = _$LocationsInjectableModule();
     final myBagInjectableModule = _$MyBagInjectableModule();
     final sessionsInjectableModule = _$SessionsInjectableModule();
+    final plansInjectableModule = _$PlansInjectableModule();
     final progressInjectableModule = _$ProgressInjectableModule();
     gh.factory<_i205.LocationsBloc>(
       () => locationsInjectableModule.locationsBloc,
@@ -130,6 +136,12 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i727.GetClubSessionHistoryUsecase>(
       () => myBagInjectableModule.getClubSessionHistoryUsecase,
     );
+    gh.lazySingleton<_i957.GetSessionTemplatesUsecase>(
+      () => plansInjectableModule.getSessionTemplatesUsecase,
+    );
+    gh.lazySingleton<_i969.BuildSessionPlanUsecase>(
+      () => plansInjectableModule.buildSessionPlanUsecase,
+    );
     gh.lazySingleton<_i136.GetClubTrendsUsecase>(
       () => progressInjectableModule.getClubTrendsUsecase,
     );
@@ -172,5 +184,7 @@ class _$LocationsInjectableModule extends _i578.LocationsInjectableModule {}
 class _$MyBagInjectableModule extends _i547.MyBagInjectableModule {}
 
 class _$SessionsInjectableModule extends _i196.SessionsInjectableModule {}
+
+class _$PlansInjectableModule extends _i356.PlansInjectableModule {}
 
 class _$ProgressInjectableModule extends _i869.ProgressInjectableModule {}
