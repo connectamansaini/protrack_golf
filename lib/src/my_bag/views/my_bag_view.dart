@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -152,10 +154,19 @@ class _MyBagScaffold extends StatelessWidget {
     ),
   );
 
+  /// Club detail can add the club to the bag or change its distance, so
+  /// the list reloads when the golfer comes back.
+  Future<void> _openDetail(BuildContext context, GolfClub club) async {
+    await context.push(MyBagRoutes.club(club.name));
+    if (context.mounted) {
+      context.read<MyBagBloc>().add(const MyBagRequested());
+    }
+  }
+
   Widget _card(BuildContext context, ClubDistanceRecord record) =>
       ClubDistanceCard(
         record: record,
-        onTap: () => context.push(MyBagRoutes.club(record.club.name)),
+        onTap: () => unawaited(_openDetail(context, record.club)),
         onLongPress: () => _showCardActions(context, record),
         onEditDistance: record.inBag
             ? () => _openClubSheet(

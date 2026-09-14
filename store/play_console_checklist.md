@@ -100,6 +100,21 @@ bump `version:` in `pubspec.yaml` to `1.0.1+2` and rebuild if anything
 changed) → countries: **All countries** (or India + a few) → Save and
 publish. Review takes hours to a few days for a first release.
 
+## Release history
+
+| Version | Code | Notes |
+|---|---|---|
+| 1.0.0 | 1 | First release |
+| 1.0.1 | 2 | Practice vs full-potential balls, session plans (Focused Practice, Dial In Distances, Quick Bucket), My Bag list refresh after editing a club, manual form pre-selects a lone range |
+
+Release notes for 1.0.1 (en-US):
+
+```
+New: tag balls as practice or full potential. Only full shots count toward your yardages.
+New: session plans. Pick Focused Practice, Dial In Distances or Quick Bucket and the app splits your bucket into phases with drills.
+Fixed: My Bag now refreshes after editing a club from its detail screen.
+```
+
 ## Every future update
 
 ```bash

@@ -89,7 +89,8 @@ Legend: ✅ pass · ❌ fail · ⚠️ pass with a note
 2. Add club: pick 5 Iron, toggle "in my bag", set 170 via slider, save.
 3. 5 Iron detail: "your yds 170", no range data, chart absent.
 4. 7 Iron detail: range avg, best, sessions list, trend chart with two
-   points; "Add to bag" then "Edit distance" to 150.
+   points; "Add to bag" then "Edit distance" to 150. Back to the list:
+   the 7 Iron card shows "In bag · 150 yds" without any other action.
 5. Remove 5 Iron from the bag.
 
 ## S9 · Persistence and platform
@@ -117,6 +118,12 @@ dumps for element positions; screenshots kept per scenario.
 | S9 Persistence and platform | ✅ | Data survives force-stop; activity requests SCREEN_ORIENTATION_PORTRAIT; back from the tab root leaves the app |
 
 No Dart exceptions in the run log across the whole session.
+
+Found afterwards while recapturing the store screenshots, fixed in the
+same release: the My Bag list did not reload after coming back from a
+club's detail screen, so a club added to the bag (or a changed distance)
+from there stayed stale until another bag action. S8 step 4 now also
+checks the list after returning from detail.
 
 ### Observations not treated as bugs
 
