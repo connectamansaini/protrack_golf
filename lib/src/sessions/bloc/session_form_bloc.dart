@@ -50,6 +50,11 @@ class SessionFormBloc extends Bloc<SessionFormEvent, SessionFormState> {
               ? const LocationsStatus.empty()
               : const LocationsStatus.success(),
           availableLocations: locations,
+          // Same shortcut as the range logger: a golfer with one range
+          // should not have to pick it every time.
+          selectedLocationId: locations.length == 1
+              ? locations.first.id
+              : state.selectedLocationId,
         ),
       ),
     );
@@ -148,7 +153,7 @@ class SessionFormBloc extends Bloc<SessionFormEvent, SessionFormState> {
       locationId: state.selectedLocationId,
       bucketSize: state.bucketSize,
       clubEntries: state.clubEntries,
-      notes: state.notes,
+      notes: state.notes.trim(),
       mediaPaths: state.mediaPaths,
     );
     final result = await _logSession(session);

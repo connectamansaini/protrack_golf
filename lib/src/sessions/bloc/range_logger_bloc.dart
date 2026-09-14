@@ -386,7 +386,7 @@ class RangeLoggerBloc extends Bloc<RangeLoggerEvent, RangeLoggerState> {
       locationId: state.selectedLocationId,
       bucketSize: state.bucketSize,
       clubEntries: state.clubEntries,
-      notes: state.notes,
+      notes: state.notes.trim(),
       planName: state.plan?.templateName ?? '',
     );
     final result = await _logSession(session);
