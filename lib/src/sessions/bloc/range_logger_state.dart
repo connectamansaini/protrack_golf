@@ -116,6 +116,10 @@ class RangeLoggerState extends Equatable {
 
   int get selectedClubShots => shotCountsByClub[selectedClub] ?? 0;
 
+  int get selectedClubPracticeShots => shots
+      .where((shot) => shot.club == selectedClub && shot.isPractice)
+      .length;
+
   /// Average of the selected club's full-potential shots this session.
   double get selectedClubAverageYds {
     final distances = [

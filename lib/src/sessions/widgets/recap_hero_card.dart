@@ -29,6 +29,18 @@ class RecapHeroCard extends StatelessWidget {
     return 'Logged and saved. Consistency beats distance.';
   }
 
+  /// Plan name and practice-ball note, or empty when neither applies.
+  String get _planLine {
+    final practice = recap.practiceShots;
+    final practiceNote =
+        '$practice practice ball${practice == 1 ? '' : 's'} not counted in '
+        'yardages';
+    return [
+      if (recap.session.planName.isNotEmpty) recap.session.planName,
+      if (practice > 0) practiceNote,
+    ].join('  ·  ');
+  }
+
   @override
   Widget build(BuildContext context) {
     final longest = recap.longestShot;
@@ -63,6 +75,15 @@ class RecapHeroCard extends StatelessWidget {
                 color: AppColors.white,
               ),
             ),
+            if (_planLine.isNotEmpty) ...[
+              const SizedBox(height: AppSpacing.xxs),
+              Text(
+                _planLine,
+                style: AppTypography.textTheme.bodyMedium?.copyWith(
+                  color: AppColors.white,
+                ),
+              ),
+            ],
             const SizedBox(height: AppSpacing.md),
             Row(
               children: [
@@ -75,7 +96,7 @@ class RecapHeroCard extends StatelessWidget {
                 Expanded(
                   child: _Stat(
                     value: '$clubs',
-                    label: clubs == 1 ? 'club' : 'clubs',
+                    label: clubs == 1 ? 'club counted' : 'clubs counted',
                   ),
                 ),
                 Expanded(

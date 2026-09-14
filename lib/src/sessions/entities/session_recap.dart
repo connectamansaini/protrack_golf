@@ -24,8 +24,14 @@ abstract class SessionRecap with _$SessionRecap {
 
   static SessionRecap empty = SessionRecap(session: PracticeSession.empty);
 
-  int get totalShots =>
+  /// Every ball hit, practice included.
+  int get totalShots => session.totalShots;
+
+  /// Full-potential shots: the ones the per-club recaps are built from.
+  int get fullShots =>
       clubRecaps.fold(0, (total, recap) => total + recap.shots);
+
+  int get practiceShots => session.practiceShots;
 
   /// Changes smaller than this read as "about the same" rather than a real
   /// move in either direction.

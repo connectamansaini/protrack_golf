@@ -12,6 +12,7 @@ class BallsRemainingCounter extends StatelessWidget {
     required this.currentClubLabel,
     super.key,
     this.currentClubShots = 0,
+    this.currentClubPracticeShots = 0,
     this.currentClubAverageYds = 0,
   });
 
@@ -19,16 +20,34 @@ class BallsRemainingCounter extends StatelessWidget {
   final int hit;
   final int bucketSize;
   final String currentClubLabel;
+
+  /// Every ball hit with the current club this session.
   final int currentClubShots;
+
+  /// How many of [currentClubShots] were practice balls (not averaged).
+  final int currentClubPracticeShots;
+
+  /// Average of the current club's full-potential shots.
   final double currentClubAverageYds;
+
+  String get _clubLine {
+    final full = currentClubShots - currentClubPracticeShots;
+    if (currentClubShots == 0) return 'No $currentClubLabel shots yet';
+    if (full == 0) {
+      return '$currentClubPracticeShots practice  ·  none counted yet';
+    }
+    final avg =
+        '$full counted  ·  avg '
+        '${currentClubAverageYds.toStringAsFixed(0)} yds';
+    return currentClubPracticeShots == 0
+        ? avg
+        : '$avg  ·  $currentClubPracticeShots practice';
+  }
 
   @override
   Widget build(BuildContext context) {
     final progress = bucketSize == 0 ? 0.0 : (hit / bucketSize).clamp(0.0, 1.0);
-    final clubLine = currentClubShots == 0
-        ? 'No $currentClubLabel shots yet'
-        : '$currentClubShots shot${currentClubShots == 1 ? '' : 's'}  ·  '
-              'avg ${currentClubAverageYds.toStringAsFixed(0)} yds';
+    final clubLine = _clubLine;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),

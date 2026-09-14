@@ -56,6 +56,12 @@ android {
     }
 
     buildTypes {
+        // Debug builds get their own package so `flutter run` can sit next
+        // to the Play-signed install instead of failing on the signature.
+        debug {
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-debug"
+        }
         release {
             signingConfig = if (hasReleaseKeystore) {
                 signingConfigs.getByName("release")

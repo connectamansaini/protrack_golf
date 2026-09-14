@@ -25,7 +25,9 @@ class SessionRecapBloc extends Bloc<SessionRecapEvent, SessionRecapState> {
       result.fold(
         (failure) => state.copyWith(status: SessionsStatus.failure(failure)),
         (recap) => state.copyWith(
-          status: recap.clubRecaps.isEmpty
+          // A practice-only session still has a recap worth showing (the
+          // balls were hit); only a session with nothing logged is empty.
+          status: recap.totalShots == 0
               ? const SessionsStatus.empty()
               : const SessionsStatus.success(),
           recap: recap,

@@ -433,6 +433,7 @@ class _LoggingStepState extends State<_LoggingStep> {
             bucketSize: state.bucketSize,
             currentClubLabel: state.selectedClub.label,
             currentClubShots: state.selectedClubShots,
+            currentClubPracticeShots: state.selectedClubPracticeShots,
             currentClubAverageYds: state.selectedClubAverageYds,
           ),
           if (state.currentPhase case final phase?) ...[

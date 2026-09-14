@@ -10,6 +10,21 @@ class ClubEntryTile extends StatelessWidget {
   final ClubEntry entry;
   final VoidCallback? onRemove;
 
+  String get _summary {
+    final shots = entry.fullShots;
+    final practice = entry.practiceShots;
+    final practiceNote = '$practice practice ball${practice == 1 ? '' : 's'}';
+    if (shots == 0) {
+      return practice == 0
+          ? 'No distances recorded'
+          : '$practiceNote  ·  none counted in yardages';
+    }
+    final counted =
+        '$shots shot${shots == 1 ? '' : 's'}  ·  '
+        'best ${entry.bestDistance.toStringAsFixed(0)} yds';
+    return practice == 0 ? counted : '$counted  ·  $practiceNote';
+  }
+
   @override
   Widget build(BuildContext context) {
     final shots = entry.distances.length;
@@ -32,10 +47,7 @@ class ClubEntryTile extends StatelessWidget {
                       ),
                       const SizedBox(height: AppSpacing.xxs),
                       Text(
-                        shots == 0
-                            ? 'No distances recorded'
-                            : '$shots shot${shots == 1 ? '' : 's'}  ·  '
-                                  'best ${entry.bestDistance.toStringAsFixed(0)} yds',
+                        _summary,
                         style: AppTypography.textTheme.bodySmall,
                       ),
                     ],
