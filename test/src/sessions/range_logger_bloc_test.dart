@@ -12,13 +12,13 @@ import '../../helpers/fake_sessions_repository.dart';
 Future<void> settle() => Future<void>.delayed(const Duration(milliseconds: 20));
 
 void main() {
-  const dwarka = Location(id: 'dwarka', name: 'Dwarka Golf Range');
-  const qutub = Location(id: 'qutub', name: 'Qutub Golf Course');
+  const riverside = Location(id: 'riverside', name: 'Riverside Driving Range');
+  const hilltop = Location(id: 'hilltop', name: 'Hilltop Golf Club');
 
   final lastSession = PracticeSession(
     id: 'last',
     date: DateTime(2026, 9),
-    locationId: 'dwarka',
+    locationId: 'riverside',
     clubEntries: const [
       ClubEntry(club: GolfClub.pitchingWedge, distances: [90]),
       ClubEntry(distances: [210]),
@@ -38,7 +38,7 @@ void main() {
   );
 
   setUp(() {
-    locations = FakeLocationsRepository([dwarka]);
+    locations = FakeLocationsRepository([riverside]);
     sessions = FakeSessionsRepository([lastSession]);
   });
 
@@ -48,8 +48,8 @@ void main() {
       final bloc = build()..add(const RangeLoggerStarted());
       await settle();
 
-      expect(bloc.state.availableLocations, [dwarka]);
-      expect(bloc.state.selectedLocationId, 'dwarka');
+      expect(bloc.state.availableLocations, [riverside]);
+      expect(bloc.state.selectedLocationId, 'riverside');
       expect(bloc.state.lastSessionClubs, {
         GolfClub.driver,
         GolfClub.pitchingWedge,
@@ -58,7 +58,7 @@ void main() {
     });
 
     test('does not pre-select when there are several locations', () async {
-      locations = FakeLocationsRepository([dwarka, qutub]);
+      locations = FakeLocationsRepository([riverside, hilltop]);
       final bloc = build()..add(const RangeLoggerStarted());
       await settle();
 
@@ -209,7 +209,7 @@ void main() {
 
       expect(bloc.state.submitStatus, isA<AppStatusSuccess<SessionsFailure>>());
       final saved = bloc.state.savedSession!;
-      expect(saved.locationId, 'dwarka');
+      expect(saved.locationId, 'riverside');
       expect(saved.bucketSize, 25);
       expect(saved.notes, 'Windy');
       expect(saved.clubEntries.map((e) => e.club), [

@@ -9,8 +9,8 @@ import '../../helpers/fake_sessions_repository.dart';
 Future<void> settle() => Future<void>.delayed(const Duration(milliseconds: 20));
 
 void main() {
-  const dwarka = Location(id: 'dwarka', name: 'Dwarka Golf Range');
-  const qutub = Location(id: 'qutub', name: 'Qutub Golf Course');
+  const riverside = Location(id: 'riverside', name: 'Riverside Driving Range');
+  const hilltop = Location(id: 'hilltop', name: 'Hilltop Golf Club');
 
   late FakeLocationsRepository locations;
   late FakeSessionsRepository sessions;
@@ -22,7 +22,7 @@ void main() {
   );
 
   setUp(() {
-    locations = FakeLocationsRepository([dwarka]);
+    locations = FakeLocationsRepository([riverside]);
     sessions = FakeSessionsRepository([]);
   });
 
@@ -31,12 +31,12 @@ void main() {
       final bloc = build()..add(const SessionFormStarted());
       await settle();
 
-      expect(bloc.state.selectedLocationId, 'dwarka');
+      expect(bloc.state.selectedLocationId, 'riverside');
       await bloc.close();
     });
 
     test('leaves the location unset when there is a choice', () async {
-      locations = FakeLocationsRepository([dwarka, qutub]);
+      locations = FakeLocationsRepository([riverside, hilltop]);
       final bloc = build()..add(const SessionFormStarted());
       await settle();
 
@@ -58,7 +58,7 @@ void main() {
       await settle();
 
       final saved = bloc.state.savedSession!;
-      expect(saved.locationId, 'dwarka');
+      expect(saved.locationId, 'riverside');
       expect(saved.notes, 'thin contact, slice');
       expect(saved.clubEntries.single.distances, [145, 150]);
       await bloc.close();

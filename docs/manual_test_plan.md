@@ -18,11 +18,11 @@ Legend: ✅ pass · ❌ fail · ⚠️ pass with a note
 
 ## S2 · Locations
 
-1. From the pin icon, add "Dwarka Golf Range" with a note. Save is
+1. From the pin icon, add "Riverside Driving Range" with a note. Save is
    disabled until a name is typed.
-2. Add a second range "Qutub Golf Course".
+2. Add a second range "Hilltop Golf Club".
 3. Both tiles show a monogram and "0 sessions".
-4. Delete "Qutub Golf Course": a confirm dialog appears; Cancel keeps it;
+4. Delete "Hilltop Golf Club": a confirm dialog appears; Cancel keeps it;
    confirming removes it.
 
 ## S3 · Range logger, free practice
@@ -69,7 +69,7 @@ Legend: ✅ pass · ❌ fail · ⚠️ pass with a note
 ## S6 · Add past session by hand
 
 1. Add manually: date chips (Today / Yesterday / pick); pick Yesterday.
-2. Location Dwarka; add 7 Iron entry with distances 145, 150 via the
+2. Location Riverside; add 7 Iron entry with distances 145, 150 via the
    slider; add Driver 220.
 3. Notes "thin contact, slice". Save.
 4. Session appears in the list dated yesterday; month stats count it.

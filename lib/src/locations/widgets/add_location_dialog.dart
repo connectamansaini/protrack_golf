@@ -119,7 +119,7 @@ class _AddLocationDialogState extends State<AddLocationDialog> {
               textInputAction: TextInputAction.next,
               decoration: const InputDecoration(
                 labelText: 'Name',
-                hintText: 'e.g. Dwarka Golf Range',
+                hintText: 'e.g. Riverside Driving Range',
               ),
               onSubmitted: (_) => _notesFocus.requestFocus(),
             ),
